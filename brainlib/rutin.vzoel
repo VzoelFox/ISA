@@ -21,3 +21,13 @@ sfence              opcode=0x0F,0xAE,0xF8 ; [AI_HINT: Store Fence (Tunggu akses 
 ; --- System & Diagnostics ---
 rdtsc               opcode=0x0F,0x31 ; [AI_HINT: Baca Time-Stamp Counter ke EDX:EAX]
 cpuid               opcode=0x0F,0xA2 ; [AI_HINT: Identifikasi fitur CPU (input: EAX)]
+
+; --- Context Switching & Threading (Advanced) ---
+rdfsbase.r64        rex=W opcode=0xF3,0x0F,0xAE modrm=0 ; [AI_HINT: Baca FS Base ke register (TLS)]
+wrfsbase.r64        rex=W opcode=0xF3,0x0F,0xAE modrm=1 ; [AI_HINT: Tulis FS Base dari register (TLS)]
+rdgsbase.r64        rex=W opcode=0xF3,0x0F,0xAE modrm=2 ; [AI_HINT: Baca GS Base ke register]
+wrgsbase.r64        rex=W opcode=0xF3,0x0F,0xAE modrm=3 ; [AI_HINT: Tulis GS Base dari register]
+
+; --- FPU/SIMD State Management ---
+fxsave.mem          rex=W opcode=0x0F,0xAE modrm=0 ; [AI_HINT: Simpan state FPU/MXCSR ke memori (512 bytes)]
+fxrstor.mem         rex=W opcode=0x0F,0xAE modrm=1 ; [AI_HINT: Pulihkan state FPU/MXCSR dari memori]

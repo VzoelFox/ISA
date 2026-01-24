@@ -1,0 +1,7 @@
+*.o
+*.obj
+*.exe
+*.morph
+loader/fox-loader
+tools/fasm
+tools/fasm.x64

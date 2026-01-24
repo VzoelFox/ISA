@@ -1,18 +1,3 @@
 ; Morph I/O Instructions
 
 syscall             opcode=0x0F,0x05 ; [AI_HINT: Panggil System Call kernel Linux]
-
-; Port I/O Instructions (Hardware Direct Access)
-in.al.imm8          opcode=0xE4 imm=imm8        ; [AI_HINT: Baca byte dari port I/O ke AL]
-in.ax.imm8          opcode=0x66,0xE5 imm=imm8   ; [AI_HINT: Baca word dari port I/O ke AX]
-in.eax.imm8         opcode=0xE5 imm=imm8        ; [AI_HINT: Baca dword dari port I/O ke EAX]
-in.al.dx            opcode=0xEC                 ; [AI_HINT: Baca byte dari port (DX) ke AL]
-in.ax.dx            opcode=0x66,0xED            ; [AI_HINT: Baca word dari port (DX) ke AX]
-in.eax.dx           opcode=0xED                 ; [AI_HINT: Baca dword dari port (DX) ke EAX]
-
-out.imm8.al         opcode=0xE6 imm=imm8        ; [AI_HINT: Tulis byte AL ke port I/O]
-out.imm8.ax         opcode=0x66,0xE7 imm=imm8   ; [AI_HINT: Tulis word AX ke port I/O]
-out.imm8.eax        opcode=0xE7 imm=imm8        ; [AI_HINT: Tulis dword EAX ke port I/O]
-out.dx.al           opcode=0xEE                 ; [AI_HINT: Tulis byte AL ke port (DX)]
-out.dx.ax           opcode=0x66,0xEF            ; [AI_HINT: Tulis word AX ke port (DX)]
-out.dx.eax          opcode=0xEF                 ; [AI_HINT: Tulis dword EAX ke port (DX)]

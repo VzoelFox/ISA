@@ -1,30 +1,6 @@
 ; Morph Memory Primitives (Operasi Memori Dasar)
 ; [AI_HINT: Instruksi level ISA untuk manipulasi blok memori secara efisien]
 
-; --- Basic Data Transfer ---
-mov.r64.r64         rex=W opcode=0x89 modrm=reg,reg ; [AI_HINT: Salin register ke register]
-mov.r64.mem         rex=W opcode=0x8B modrm=reg,mem ; [AI_HINT: Salin memori ke register]
-mov.mem.r64         rex=W opcode=0x89 modrm=mem,reg ; [AI_HINT: Salin register ke memori]
-mov.r64.imm32       rex=W opcode=0xC7 modrm=0 imm32 ; [AI_HINT: Salin immediate 32-bit ke register (Sign-extended)]
-mov.r64.imm64       rex=W opcode=0xB8 imm=imm64     ; [AI_HINT: Salin immediate 64-bit ke register (RAX-based usually/or encoded in opcode)]
-mov.mem.imm32       rex=W opcode=0xC7 modrm=0 imm32 ; [AI_HINT: Salin immediate 32-bit ke memori]
-
-; --- Stack Operations ---
-push.r64            opcode=0x50 ; [AI_HINT: Push register ke stack]
-push.imm8           opcode=0x6A imm=imm8 ; [AI_HINT: Push byte immediate ke stack]
-push.imm32          opcode=0x68 imm=imm32 ; [AI_HINT: Push dword immediate ke stack]
-push.mem64          opcode=0xFF modrm=6 ; [AI_HINT: Push qword dari memori ke stack]
-
-pop.r64             opcode=0x58 ; [AI_HINT: Pop stack ke register]
-pop.mem64           opcode=0x8F modrm=0 ; [AI_HINT: Pop stack ke memori]
-
-; --- Address Calculation ---
-lea.r64.mem         rex=W opcode=0x8D modrm=reg,mem ; [AI_HINT: Load Effective Address (Hitung alamat pointer)]
-
-; --- Exchange ---
-xchg.r64.r64        rex=W opcode=0x87 modrm=reg,reg ; [AI_HINT: Tukar isi dua register]
-xchg.r64.mem        rex=W opcode=0x87 modrm=reg,mem ; [AI_HINT: Tukar isi register dan memori]
-
 ; --- Direction Flags ---
 ; Mengatur arah operasi string (Auto-increment vs Auto-decrement)
 cld                 opcode=0xFC ; [AI_HINT: Clear Direction Flag (Increment/Maju)]
