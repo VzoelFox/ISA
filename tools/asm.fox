@@ -16,6 +16,55 @@ MAP_PRIVATE = 2
 
 ; --- CODE ---
 start:
+    ; --- TEST ISA LOOKUP (Commented out for production) ---
+    ; lea rdi, [test_mnemonic]
+    ; call strlen
+    ; mov rsi, rax
+    ; lea rdi, [test_mnemonic]
+    ; call fnv1a_hash
+    ;
+    ; call lookup_instruction
+    ;
+    ; cmp rdi, 0
+    ; je .lookup_fail
+    ;
+    ; mov [lookup_result_ptr], rdi ; SAVE RESULT BEFORE SYSCALL
+    ;
+    ; ; Print "Found: "
+    ; mov rax, sys_write
+    ; mov rdx, 7
+    ; lea rsi, [msg_found]
+    ; mov rdi, 1
+    ; syscall
+    ;
+    ; ; Print the found mnemonic string (first field in metadata)
+    ; mov rdi, [lookup_result_ptr]
+    ; call strlen
+    ; mov rdx, rax
+    ; mov rsi, [lookup_result_ptr]
+    ; mov rax, sys_write
+    ; mov rdi, 1
+    ; syscall
+    ;
+    ; ; Print Newline
+    ; mov rax, sys_write
+    ; mov rdx, 1
+    ; lea rsi, [newline]
+    ; mov rdi, 1
+    ; syscall
+    ;
+    ; jmp .continue_main
+    ;
+    ; .lookup_fail:
+    ; mov rax, sys_write
+    ; mov rdx, 11
+    ; lea rsi, [msg_not_found]
+    ; mov rdi, 1
+    ; syscall
+    ; jmp exit
+    ; --- END TEST ---
+
+.continue_main:
     pop rcx
     cmp rcx, 2
     jl usage
@@ -75,7 +124,7 @@ error_open:
     mov rax, sys_write
     mov rdi, 1
     lea rsi, [msg_err]
-    mov rdx, 10
+    mov rdx, 16
     syscall
     jmp exit
 
@@ -83,7 +132,7 @@ error_mmap:
     mov rax, sys_write
     mov rdi, 1
     lea rsi, [msg_err]
-    mov rdx, 10
+    mov rdx, 16
     syscall
     jmp exit
 
@@ -92,14 +141,91 @@ exit:
     mov rdi, 1
     syscall
 
-; --- DATA ---
-input_filename db 0,0,0,0,0,0,0,0
-input_fd db 0,0,0,0,0,0,0,0
-input_size db 0,0,0,0,0,0,0,0
-source_ptr db 0,0,0,0,0,0,0,0
+; --- ROUTINES ---
 
-msg_usage db "Usage: asm.fox <in>", 10
-msg_err db "Error detected.", 10
+strlen:
+    ; Input: rdi (str)
+    ; Output: rax (len)
+    xor rax, rax
+.loop:
+    cmp byte [rdi + rax], 0
+    je .done
+    inc rax
+    jmp .loop
+.done:
+    ret
+
+fnv1a_hash:
+    ; Input: rdi (ptr to string), rsi (length)
+    ; Output: rax (hash)
+    mov rax, 0xcbf29ce484222325
+    mov r8, 0x100000001b3
+    xor rcx, rcx
+.loop:
+    cmp rcx, rsi
+    je .done
+    xor r9, r9
+    mov r9b, [rdi + rcx]
+    xor rax, r9
+    mul r8 ; rax = rax * r8 (rdx affected)
+    inc rcx
+    jmp .loop
+.done:
+    ret
+
+lookup_instruction:
+    ; Input: rax (hash)
+    ; Output: rdi (ptr to metadata) or 0 if not found
+
+    push rbx
+    mov rbx, rax ; Save hash to compare later
+
+    xor rdx, rdx
+    mov rcx, VZOEL_TABLE_SIZE
+    div rcx ; rax = hash / size, rdx = hash % size
+
+    mov rcx, rdx ; index
+    mov rsi, rdx ; start index for loop check
+
+.probe:
+    mov r8, [vzoel_table_keys + rcx*8]
+    cmp r8, 0
+    je .not_found
+
+    cmp r8, rbx
+    je .found
+
+    inc rcx
+    and rcx, VZOEL_TABLE_SIZE - 1 ; Wrap around
+
+    cmp rcx, rsi
+    je .not_found
+    jmp .probe
+
+.found:
+    mov rdi, [vzoel_table_values + rcx*8]
+    pop rbx
+    ret
+
+.not_found:
+    xor rdi, rdi
+    pop rbx
+    ret
+
+; --- DATA ---
+input_filename dq 0
+input_fd dq 0
+input_size dq 0
+source_ptr dq 0
+lookup_result_ptr dq 0
+
+msg_usage db "Usage: asm.fox <in>", 10, 0
+msg_err db "Error detected.", 10, 0
+msg_found db "Found: ", 0
+msg_not_found db "Not Found.", 10, 0
+newline db 10, 0
+
+test_mnemonic db "mov.r64.r64", 0
 
 stat_buf:
 db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
@@ -111,3 +237,5 @@ db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
 db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
 db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
 db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
+
+include 'brainlib/vzoel_table.fox'
