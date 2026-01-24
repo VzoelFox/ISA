@@ -16,6 +16,65 @@ MAP_PRIVATE = 2
 
 ; --- CODE ---
 start:
+    ; --- ENCODING TEST ---
+    ; We will hardcode a test case:
+    ; Instruction: mov.r64.r64 (Found via hash)
+    ; Operand 1: rax
+    ; Operand 2: rbx
+    ; Expected Output: 48 89 D8 (REX.W + 89 + ModRM(C0 | src=3(rbx) | dst=0(rax)))
+    ; Wait, modrm=rm,reg means DST=RM, SRC=REG.
+    ; mov rax, rbx -> DST=rax, SRC=rbx.
+    ; ModRM(11, 3, 0) -> C0 | 18 | 0 = D8. Correct.
+
+    ; Setup for test
+    ; 1. Lookup "mov.r64.r64"
+    lea rdi, [test_mnemonic]
+    call strlen
+    mov rsi, rax
+    lea rdi, [test_mnemonic]
+    call fnv1a_hash
+    call lookup_instruction
+
+    cmp rdi, 0
+    je .fail_lookup
+
+    mov [current_instr_ptr], rdi
+
+    ; 2. Parse Operands "rax", "rbx"
+    lea rsi, [test_op1]
+    call parse_register
+    mov [op1_reg], al
+
+    lea rsi, [test_op2]
+    call parse_register
+    mov [op2_reg], al
+
+    ; 3. Encode
+    call encode_instruction
+
+    ; 4. Print Output Hex
+    mov rsi, output_buffer
+    mov rcx, [output_len]
+    call print_hex
+
+    mov rax, sys_write
+    mov rdi, 1
+    lea rsi, [newline]
+    mov rdx, 1
+    syscall
+
+    jmp .continue_main
+
+.fail_lookup:
+    mov rax, sys_write
+    mov rdi, 1
+    lea rsi, [msg_not_found]
+    mov rdx, 11
+    syscall
+    jmp exit
+
+.continue_main:
+    ; --- ORIGINAL LOGIC ---
     pop rcx
     cmp rcx, 2
     jl usage
@@ -58,81 +117,6 @@ start:
     je error_mmap
     mov [source_ptr], rax
 
-    ; --- LEXER LOOP TEST ---
-    mov rsi, [source_ptr]          ; Current Source Pointer
-    mov r12, [source_ptr]
-    add r12, [input_size]          ; End Pointer
-
-.lexer_loop:
-    cmp rsi, r12
-    jge .lexer_done
-
-    ; Call get_token
-    ; Input: rsi (current ptr), r12 (end ptr)
-    ; Output: rax (len), rsi (updated ptr), token_buffer filled
-    call get_token
-
-    cmp rax, 0
-    je .lexer_done ; EOF or Error
-
-    ; Hash the token
-    lea rdi, [token_buffer]
-    mov r13, rax ; Save len
-    mov rsi, rax ; Len for hash
-    call fnv1a_hash
-
-    ; Lookup
-    call lookup_instruction
-
-    cmp rdi, 0
-    jne .print_instr
-
-    ; Print "Token: <token>\n"
-    mov rax, sys_write
-    mov rdi, 1
-    lea rsi, [msg_token]
-    mov rdx, 7
-    syscall
-
-    mov rax, sys_write
-    mov rdi, 1
-    lea rsi, [token_buffer]
-    mov rdx, r13
-    syscall
-
-    mov rax, sys_write
-    mov rdi, 1
-    lea rsi, [newline]
-    mov rdx, 1
-    syscall
-
-    mov rsi, [current_ptr] ; Restore updated pointer
-    jmp .lexer_loop
-
-.print_instr:
-    ; Print "Instr: <token>\n"
-    mov rax, sys_write
-    mov rdi, 1
-    lea rsi, [msg_instr]
-    mov rdx, 7
-    syscall
-
-    mov rax, sys_write
-    mov rdi, 1
-    lea rsi, [token_buffer]
-    mov rdx, r13
-    syscall
-
-    mov rax, sys_write
-    mov rdi, 1
-    lea rsi, [newline]
-    mov rdx, 1
-    syscall
-
-    mov rsi, [current_ptr] ; Restore updated pointer
-    jmp .lexer_loop
-
-.lexer_done:
     ; Exit
     mov rax, sys_exit
     xor rdi, rdi
@@ -170,8 +154,6 @@ exit:
 ; --- ROUTINES ---
 
 strlen:
-    ; Input: rdi (str)
-    ; Output: rax (len)
     xor rax, rax
 .loop:
     cmp byte [rdi + rax], 0
@@ -182,8 +164,6 @@ strlen:
     ret
 
 fnv1a_hash:
-    ; Input: rdi (ptr to string), rsi (length)
-    ; Output: rax (hash)
     mov rax, 0xcbf29ce484222325
     mov r8, 0x100000001b3
     xor rcx, rcx
@@ -193,163 +173,226 @@ fnv1a_hash:
     xor r9, r9
     mov r9b, [rdi + rcx]
     xor rax, r9
-    mul r8 ; rax = rax * r8 (rdx affected)
+    mul r8
     inc rcx
     jmp .loop
 .done:
     ret
 
 lookup_instruction:
-    ; Input: rax (hash)
-    ; Output: rdi (ptr to metadata) or 0 if not found
-
     push rbx
-    mov rbx, rax ; Save hash to compare later
-
+    mov rbx, rax
     xor rdx, rdx
     mov rcx, VZOEL_TABLE_SIZE
-    div rcx ; rax = hash / size, rdx = hash % size
-
-    mov rcx, rdx ; index
-    mov rsi, rdx ; start index for loop check
-
+    div rcx
+    mov rcx, rdx
+    mov rsi, rdx
 .probe:
     mov r8, [vzoel_table_keys + rcx*8]
     cmp r8, 0
     je .not_found
-
     cmp r8, rbx
     je .found
-
     inc rcx
-    and rcx, VZOEL_TABLE_SIZE - 1 ; Wrap around
-
+    and rcx, VZOEL_TABLE_SIZE - 1
     cmp rcx, rsi
     je .not_found
     jmp .probe
-
 .found:
     mov rdi, [vzoel_table_values + rcx*8]
     pop rbx
     ret
-
 .not_found:
     xor rdi, rdi
     pop rbx
     ret
 
-; --- LEXER ROUTINES ---
+parse_register:
+    ; Input: rsi (string ptr e.g. "rax")
+    ; Output: al (id 0-15), ah (success 1/0)
+    ; Simple hash check or string cmp? String cmp is safer for now.
 
-skip_whitespace:
-    ; Input: rsi (current ptr), r12 (end ptr)
-    ; Output: rsi (advanced ptr)
-.ws_loop:
-    cmp rsi, r12
-    jge .ws_done
+    ; rsi points to string.
+    ; We can optimize later. For now, brute force check common regs.
 
-    mov al, [rsi]
+    cmp dword [rsi], 0x786172 ; 'rax' (little endian: 'r' 'a' 'x' 0) -> 0x786172 is wrong.
+    ; 'r' = 0x72, 'a' = 0x61, 'x' = 0x78
+    ; "rax" = 0x786172
 
-    cmp al, 0x20 ; Space
-    je .skip
-    cmp al, 0x09 ; Tab
-    je .skip
-    cmp al, 0x0A ; LF
-    je .skip
-    cmp al, 0x0D ; CR
-    je .skip
+    ; Helper macro for checking
+    ; rsi[0] is always 'r' (0x72) or 'e' or ... assume 64-bit 'r'
 
-    jmp .ws_done
-.skip:
-    inc rsi
-    jmp .ws_loop
-.ws_done:
+    mov eax, [rsi]
+    and eax, 0xFFFFFF ; Take first 3 bytes
+
+    cmp eax, 0x786172 ; "rax"
+    je .is_rax
+    cmp eax, 0x786272 ; "rbx"
+    je .is_rbx
+    cmp eax, 0x786372 ; "rcx"
+    je .is_rcx
+    cmp eax, 0x786472 ; "rdx"
+    je .is_rdx
+
+    ; More checks... skipping for POC (Proof of Concept)
+    ; Default to 0 (error)
+    xor ax, ax
     ret
 
-get_token:
-    ; Input: rsi (current ptr), r12 (end ptr)
-    ; Output: rax (len), rsi (updated ptr saved in global), writes to token_buffer
+.is_rax: mov al, 0
+         mov ah, 1
+         ret
+.is_rcx: mov al, 1
+         mov ah, 1
+         ret
+.is_rdx: mov al, 2
+         mov ah, 1
+         ret
+.is_rbx: mov al, 3
+         mov ah, 1
+         ret
 
-    call skip_whitespace
+encode_instruction:
+    ; Uses: [current_instr_ptr], [op1_reg], [op2_reg]
+    ; Output: Writes to output_buffer
 
-    cmp rsi, r12
-    jge .eof
+    mov rdi, [current_instr_ptr]
 
-    mov rdx, rsi ; Start of token
-    xor rcx, rcx ; Length
+    ; Skip mnemonic string
+    call strlen
+    add rdi, rax
+    inc rdi ; Skip null
 
-    lea rdi, [token_buffer]
+    ; Read Flags
+    mov al, [rdi]
+    inc rdi
+    mov [enc_flags], al
 
-    mov al, [rsi]
+    ; Read Opcode Len
+    mov al, [rdi]
+    inc rdi
+    mov [enc_op_len], al
 
-    ; Check delimiters
-    cmp al, '['
-    je .single_char
-    cmp al, ']'
-    je .single_char
-    cmp al, ','
-    je .single_char
-    cmp al, '+'
-    je .single_char
-    cmp al, '*'
-    je .single_char
-    cmp al, ':'
-    je .single_char
+    ; Read Opcode Bytes
+    mov eax, [rdi] ; Read 3 bytes (actually 4 but we care about 3)
+    mov [enc_op_bytes], eax
+    add rdi, 3
 
-    ; Alphanumeric loop
-.tok_loop:
-    cmp rsi, r12
-    jge .finish_token
+    ; Read ModRM Type
+    mov al, [rdi]
+    mov [enc_modrm_type], al
 
-    mov al, [rsi]
+    ; --- EMIT ---
+    lea rsi, [output_buffer]
+    xor rcx, rcx
 
-    ; Check whitespace
-    cmp al, 0x20
-    je .finish_token
-    cmp al, 0x09
-    je .finish_token
-    cmp al, 0x0A
-    je .finish_token
-    cmp al, 0x0D
-    je .finish_token
+    ; 1. REX Prefix
+    ; Check if REX.W needed (Flag bit 0)
+    test byte [enc_flags], 1
+    jz .no_rex
 
-    ; Check delimiters (break on them)
-    cmp al, '['
-    je .finish_token
-    cmp al, ']'
-    je .finish_token
-    cmp al, ','
-    je .finish_token
-    cmp al, '+'
-    je .finish_token
-    cmp al, '*'
-    je .finish_token
-    cmp al, ':'
-    je .finish_token
-
-    ; Copy char
-    mov [rdi + rcx], al
+    mov byte [rsi + rcx], 0x48 ; REX.W
     inc rcx
-    inc rsi
 
-    cmp rcx, 255 ; Max len
-    jge .finish_token
+.no_rex:
+    ; 2. Opcode
+    movzx rdx, byte [enc_op_len]
+    mov eax, [enc_op_bytes]
 
-    jmp .tok_loop
+    ; Write opcode bytes
+    ; Assumes len is 1 for now (POC)
+    mov [rsi + rcx], al
+    inc rcx
 
-.single_char:
-    mov [rdi], al
-    inc rsi
-    mov rcx, 1
-    jmp .finish_token
+    ; 3. ModRM
+    ; Type 1 = rm,reg (DST=RM, SRC=REG)
+    ; mov rax, rbx -> DST=RAX(0), SRC=RBX(3)
+    ; Mod = 11 (Register Mode)
+    ; Reg = SRC (3)
+    ; RM = DST (0)
+    ; Byte = 11 011 000 = C0 | 18 | 0 = D8
 
-.finish_token:
-    mov byte [rdi + rcx], 0 ; Null terminate
-    mov [current_ptr], rsi  ; Save state
-    mov rax, rcx
+    cmp byte [enc_modrm_type], 1
+    jne .done
+
+    mov al, 0xC0 ; Mod=11
+
+    mov bl, [op2_reg] ; Src
+    shl bl, 3
+    or al, bl
+
+    mov bl, [op1_reg] ; Dst
+    or al, bl
+
+    mov [rsi + rcx], al
+    inc rcx
+
+.done:
+    mov [output_len], rcx
     ret
 
-.eof:
-    mov rax, 0
+print_hex:
+    ; Input: rsi (buffer), rcx (len)
+    mov r8, rcx
+    xor r9, r9
+.hex_loop:
+    cmp r9, r8
+    je .hex_done
+
+    mov al, [rsi + r9]
+
+    ; High nibble
+    mov bl, al
+    shr bl, 4
+    call print_nibble
+
+    ; Low nibble
+    mov bl, al
+    and bl, 0x0F
+    call print_nibble
+
+    ; Space
+    push rsi
+    push rdx
+    push rcx
+    push rax
+    mov rax, sys_write
+    mov rdi, 1
+    lea rsi, [space_char]
+    mov rdx, 1
+    syscall
+    pop rax
+    pop rcx
+    pop rdx
+    pop rsi
+
+    inc r9
+    jmp .hex_loop
+.hex_done:
+    ret
+
+print_nibble:
+    cmp bl, 9
+    jg .letter
+    add bl, '0'
+    jmp .print
+.letter:
+    add bl, 'A' - 10
+.print:
+    mov [nibble_char], bl
+    push rsi
+    push rdx
+    push rcx
+    push rax
+    mov rax, sys_write
+    mov rdi, 1
+    lea rsi, [nibble_char]
+    mov rdx, 1
+    syscall
+    pop rax
+    pop rcx
+    pop rdx
+    pop rsi
     ret
 
 ; --- DATA ---
@@ -357,16 +400,27 @@ input_filename dq 0
 input_fd dq 0
 input_size dq 0
 source_ptr dq 0
-current_ptr dq 0
-lookup_result_ptr dq 0
+current_instr_ptr dq 0
+op1_reg db 0
+op2_reg db 0
+enc_flags db 0
+enc_op_len db 0
+enc_op_bytes dd 0
+enc_modrm_type db 0
+output_len dq 0
+
+output_buffer rb 16
 
 msg_usage db "Usage: asm.fox <in>", 10, 0
 msg_err db "Error detected.", 10, 0
-msg_token db "Token: ", 0
-msg_instr db "Instr: ", 0
+msg_not_found db "Not Found.", 10, 0
 newline db 10, 0
+space_char db ' ', 0
+nibble_char db 0, 0
 
-token_buffer rb 256
+test_mnemonic db "mov.r64.r64", 0
+test_op1 db "rax", 0
+test_op2 db "rbx", 0
 
 stat_buf:
 db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
