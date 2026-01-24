@@ -1,0 +1,3 @@
+; Morph I/O Instructions
+
+syscall             opcode=0x0F,0x05 ; [AI_HINT: Panggil System Call kernel Linux]
