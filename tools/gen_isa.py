@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import glob
+import struct
 
 # Configuration
 BRAINLIB_DIR = "brainlib"
@@ -44,9 +45,29 @@ def parse_vzoel():
                     continue
                 seen_mnemonics.add(mnemonic)
 
+                # Parse Properties
+                props = {
+                    'rex': '',
+                    'opcode': [],
+                    'modrm': '',
+                    'reg_in_op': False
+                }
+
+                for p in parts[1:]:
+                    if '=' in p:
+                        k, v = p.split('=', 1)
+                        if k == 'opcode':
+                            props['opcode'] = [int(x, 16) for x in v.split(',')]
+                        elif k == 'modrm':
+                            props['modrm'] = v
+                        elif k == 'rex':
+                            props['rex'] = v
+                    elif p == 'reg_in_op':
+                        props['reg_in_op'] = True
+
                 instructions.append({
                     'mnemonic': mnemonic,
-                    'full_line': line,
+                    'props': props,
                     'comment': comment
                 })
     return instructions
@@ -108,8 +129,52 @@ def write_asm(keys, values, instructions):
 
         for instr in instructions:
             f.write(f"\n{instr['label']}:\n")
-            # Store the mnemonic string
+
+            # 1. Mnemonic String (Null Terminated)
             f.write(f"    db '{instr['mnemonic']}', 0\n")
+
+            # 2. Encoding Info (Fixed Size or Flags)
+            # Structure:
+            # Offset 0: Mnemonic String...
+            # ...
+            # Offset N: Flags (1 byte)
+            # Offset N+1: Opcode Len (1 byte)
+            # Offset N+2: Opcode Bytes (3 bytes max)
+            # Offset N+5: ModRM Info (1 byte)
+
+            # We can't use fixed offset from label easily unless we pad string.
+            # OR we store pointer to info? No, simpler to just have fixed fields AFTER the string?
+            # String length is variable. Parser skips it.
+
+            p = instr['props']
+
+            # Encode Flags: bit 0: REX.W
+            flags = 0
+            if p['rex'] == 'W': flags |= 1
+            if p['reg_in_op']: flags |= 2
+
+            f.write(f"    db {flags} ; Flags (1=REX.W, 2=RegInOp)\n")
+
+            # Opcode
+            op_len = len(p['opcode'])
+            f.write(f"    db {op_len} ; Opcode Len\n")
+
+            op_bytes = p['opcode'] + [0]*(3-len(p['opcode']))
+            f.write(f"    db {', '.join(map(str, op_bytes))} ; Opcode Bytes (Max 3)\n")
+
+            # ModRM Info
+            # 0: None, 1: rm,reg, 2: reg,rm, 3: reg,mem, 4: mem,reg
+            modrm_code = 0
+            m = p['modrm']
+            if m == 'rm,reg': modrm_code = 1
+            elif m == 'reg,rm': modrm_code = 2
+            elif m == 'reg,mem': modrm_code = 3
+            elif m == 'mem,reg': modrm_code = 4
+            # Simplified for now. '0' '7' etc handled as raw?
+            # Let's just store specific codes for register-register mov first.
+
+            f.write(f"    db {modrm_code} ; ModRM Type (1=rm,reg)\n")
+
             if instr['comment']:
                 f.write(f"    ; {instr['comment']}\n")
 
