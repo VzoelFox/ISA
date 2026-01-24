@@ -58,6 +58,81 @@ start:
     je error_mmap
     mov [source_ptr], rax
 
+    ; --- LEXER LOOP TEST ---
+    mov rsi, [source_ptr]          ; Current Source Pointer
+    mov r12, [source_ptr]
+    add r12, [input_size]          ; End Pointer
+
+.lexer_loop:
+    cmp rsi, r12
+    jge .lexer_done
+
+    ; Call get_token
+    ; Input: rsi (current ptr), r12 (end ptr)
+    ; Output: rax (len), rsi (updated ptr), token_buffer filled
+    call get_token
+
+    cmp rax, 0
+    je .lexer_done ; EOF or Error
+
+    ; Hash the token
+    lea rdi, [token_buffer]
+    mov r13, rax ; Save len
+    mov rsi, rax ; Len for hash
+    call fnv1a_hash
+
+    ; Lookup
+    call lookup_instruction
+
+    cmp rdi, 0
+    jne .print_instr
+
+    ; Print "Token: <token>\n"
+    mov rax, sys_write
+    mov rdi, 1
+    lea rsi, [msg_token]
+    mov rdx, 7
+    syscall
+
+    mov rax, sys_write
+    mov rdi, 1
+    lea rsi, [token_buffer]
+    mov rdx, r13
+    syscall
+
+    mov rax, sys_write
+    mov rdi, 1
+    lea rsi, [newline]
+    mov rdx, 1
+    syscall
+
+    mov rsi, [current_ptr] ; Restore updated pointer
+    jmp .lexer_loop
+
+.print_instr:
+    ; Print "Instr: <token>\n"
+    mov rax, sys_write
+    mov rdi, 1
+    lea rsi, [msg_instr]
+    mov rdx, 7
+    syscall
+
+    mov rax, sys_write
+    mov rdi, 1
+    lea rsi, [token_buffer]
+    mov rdx, r13
+    syscall
+
+    mov rax, sys_write
+    mov rdi, 1
+    lea rsi, [newline]
+    mov rdx, 1
+    syscall
+
+    mov rsi, [current_ptr] ; Restore updated pointer
+    jmp .lexer_loop
+
+.lexer_done:
     ; Exit
     mov rax, sys_exit
     xor rdi, rdi
@@ -75,7 +150,7 @@ error_open:
     mov rax, sys_write
     mov rdi, 1
     lea rsi, [msg_err]
-    mov rdx, 10
+    mov rdx, 16
     syscall
     jmp exit
 
@@ -83,7 +158,7 @@ error_mmap:
     mov rax, sys_write
     mov rdi, 1
     lea rsi, [msg_err]
-    mov rdx, 10
+    mov rdx, 16
     syscall
     jmp exit
 
@@ -92,14 +167,206 @@ exit:
     mov rdi, 1
     syscall
 
-; --- DATA ---
-input_filename db 0,0,0,0,0,0,0,0
-input_fd db 0,0,0,0,0,0,0,0
-input_size db 0,0,0,0,0,0,0,0
-source_ptr db 0,0,0,0,0,0,0,0
+; --- ROUTINES ---
 
-msg_usage db "Usage: asm.fox <in>", 10
-msg_err db "Error detected.", 10
+strlen:
+    ; Input: rdi (str)
+    ; Output: rax (len)
+    xor rax, rax
+.loop:
+    cmp byte [rdi + rax], 0
+    je .done
+    inc rax
+    jmp .loop
+.done:
+    ret
+
+fnv1a_hash:
+    ; Input: rdi (ptr to string), rsi (length)
+    ; Output: rax (hash)
+    mov rax, 0xcbf29ce484222325
+    mov r8, 0x100000001b3
+    xor rcx, rcx
+.loop:
+    cmp rcx, rsi
+    je .done
+    xor r9, r9
+    mov r9b, [rdi + rcx]
+    xor rax, r9
+    mul r8 ; rax = rax * r8 (rdx affected)
+    inc rcx
+    jmp .loop
+.done:
+    ret
+
+lookup_instruction:
+    ; Input: rax (hash)
+    ; Output: rdi (ptr to metadata) or 0 if not found
+
+    push rbx
+    mov rbx, rax ; Save hash to compare later
+
+    xor rdx, rdx
+    mov rcx, VZOEL_TABLE_SIZE
+    div rcx ; rax = hash / size, rdx = hash % size
+
+    mov rcx, rdx ; index
+    mov rsi, rdx ; start index for loop check
+
+.probe:
+    mov r8, [vzoel_table_keys + rcx*8]
+    cmp r8, 0
+    je .not_found
+
+    cmp r8, rbx
+    je .found
+
+    inc rcx
+    and rcx, VZOEL_TABLE_SIZE - 1 ; Wrap around
+
+    cmp rcx, rsi
+    je .not_found
+    jmp .probe
+
+.found:
+    mov rdi, [vzoel_table_values + rcx*8]
+    pop rbx
+    ret
+
+.not_found:
+    xor rdi, rdi
+    pop rbx
+    ret
+
+; --- LEXER ROUTINES ---
+
+skip_whitespace:
+    ; Input: rsi (current ptr), r12 (end ptr)
+    ; Output: rsi (advanced ptr)
+.ws_loop:
+    cmp rsi, r12
+    jge .ws_done
+
+    mov al, [rsi]
+
+    cmp al, 0x20 ; Space
+    je .skip
+    cmp al, 0x09 ; Tab
+    je .skip
+    cmp al, 0x0A ; LF
+    je .skip
+    cmp al, 0x0D ; CR
+    je .skip
+
+    jmp .ws_done
+.skip:
+    inc rsi
+    jmp .ws_loop
+.ws_done:
+    ret
+
+get_token:
+    ; Input: rsi (current ptr), r12 (end ptr)
+    ; Output: rax (len), rsi (updated ptr saved in global), writes to token_buffer
+
+    call skip_whitespace
+
+    cmp rsi, r12
+    jge .eof
+
+    mov rdx, rsi ; Start of token
+    xor rcx, rcx ; Length
+
+    lea rdi, [token_buffer]
+
+    mov al, [rsi]
+
+    ; Check delimiters
+    cmp al, '['
+    je .single_char
+    cmp al, ']'
+    je .single_char
+    cmp al, ','
+    je .single_char
+    cmp al, '+'
+    je .single_char
+    cmp al, '*'
+    je .single_char
+    cmp al, ':'
+    je .single_char
+
+    ; Alphanumeric loop
+.tok_loop:
+    cmp rsi, r12
+    jge .finish_token
+
+    mov al, [rsi]
+
+    ; Check whitespace
+    cmp al, 0x20
+    je .finish_token
+    cmp al, 0x09
+    je .finish_token
+    cmp al, 0x0A
+    je .finish_token
+    cmp al, 0x0D
+    je .finish_token
+
+    ; Check delimiters (break on them)
+    cmp al, '['
+    je .finish_token
+    cmp al, ']'
+    je .finish_token
+    cmp al, ','
+    je .finish_token
+    cmp al, '+'
+    je .finish_token
+    cmp al, '*'
+    je .finish_token
+    cmp al, ':'
+    je .finish_token
+
+    ; Copy char
+    mov [rdi + rcx], al
+    inc rcx
+    inc rsi
+
+    cmp rcx, 255 ; Max len
+    jge .finish_token
+
+    jmp .tok_loop
+
+.single_char:
+    mov [rdi], al
+    inc rsi
+    mov rcx, 1
+    jmp .finish_token
+
+.finish_token:
+    mov byte [rdi + rcx], 0 ; Null terminate
+    mov [current_ptr], rsi  ; Save state
+    mov rax, rcx
+    ret
+
+.eof:
+    mov rax, 0
+    ret
+
+; --- DATA ---
+input_filename dq 0
+input_fd dq 0
+input_size dq 0
+source_ptr dq 0
+current_ptr dq 0
+lookup_result_ptr dq 0
+
+msg_usage db "Usage: asm.fox <in>", 10, 0
+msg_err db "Error detected.", 10, 0
+msg_token db "Token: ", 0
+msg_instr db "Instr: ", 0
+newline db 10, 0
+
+token_buffer rb 256
 
 stat_buf:
 db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
@@ -111,3 +378,5 @@ db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
 db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
 db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
 db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
+
+include '../brainlib/vzoel_table.fox'
