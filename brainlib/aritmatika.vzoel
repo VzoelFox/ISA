@@ -1,45 +1,46 @@
 ; Morph Aritmatika (Arithmetic)
 
 ; Addition
-add.r64.r64         rex=W opcode=0x01 modrm=reg,reg ; [AI_HINT: Tambah register dengan register (+)]
+add.r64.r64         rex=W opcode=0x01 modrm=rm,reg  ; [AI_HINT: Tambah register dengan register (+)]
 add.r64.mem         rex=W opcode=0x03 modrm=reg,mem ; [AI_HINT: Tambah register dengan memori (+)]
 add.mem.r64         rex=W opcode=0x01 modrm=mem,reg ; [AI_HINT: Tambah memori dengan register (+)]
-add.r64.imm32       rex=W opcode=0x81 modrm=0 imm32 ; [AI_HINT: Tambah register dengan angka 32-bit (+)]
-add.mem.imm32       rex=W opcode=0x81 modrm=0 imm32 ; [AI_HINT: Tambah memori dengan angka 32-bit (+)]
 add.r64.imm8        rex=W opcode=0x83 modrm=0 imm8  ; [AI_HINT: Tambah register dengan angka 8-bit (+)]
 add.mem.imm8        rex=W opcode=0x83 modrm=0 imm8  ; [AI_HINT: Tambah memori dengan angka 8-bit (+)]
+add.r64.imm32       rex=W opcode=0x81 modrm=0 imm32 ; [AI_HINT: Tambah register dengan angka 32-bit (+)]
+add.mem.imm32       rex=W opcode=0x81 modrm=0 imm32 ; [AI_HINT: Tambah memori dengan angka 32-bit (+)]
 
 ; Add with Carry (ZFC Support)
-adc.r64.r64         rex=W opcode=0x11 modrm=reg,reg ; [AI_HINT: Tambah dengan Carry (+ + C)]
+adc.r64.r64         rex=W opcode=0x11 modrm=rm,reg  ; [AI_HINT: Tambah dengan Carry (+ + C)]
 adc.r64.mem         rex=W opcode=0x13 modrm=reg,mem ; [AI_HINT: Tambah dengan Carry register dengan memori]
 adc.mem.r64         rex=W opcode=0x11 modrm=mem,reg ; [AI_HINT: Tambah dengan Carry memori dengan register]
-adc.r64.imm32       rex=W opcode=0x81 modrm=2 imm32 ; [AI_HINT: Tambah dengan Carry immediate 32-bit]
-adc.mem.imm32       rex=W opcode=0x81 modrm=2 imm32 ; [AI_HINT: Tambah dengan Carry memori immediate 32-bit]
 adc.r64.imm8        rex=W opcode=0x83 modrm=2 imm8  ; [AI_HINT: Tambah dengan Carry immediate 8-bit]
 adc.mem.imm8        rex=W opcode=0x83 modrm=2 imm8  ; [AI_HINT: Tambah dengan Carry memori immediate 8-bit]
+adc.r64.imm32       rex=W opcode=0x81 modrm=2 imm32 ; [AI_HINT: Tambah dengan Carry immediate 32-bit]
+adc.mem.imm32       rex=W opcode=0x81 modrm=2 imm32 ; [AI_HINT: Tambah dengan Carry memori immediate 32-bit]
 
 ; Subtraction
-sub.r64.r64         rex=W opcode=0x29 modrm=reg,reg ; [AI_HINT: Kurang register dengan register (-)]
+sub.r64.r64         rex=W opcode=0x29 modrm=rm,reg  ; [AI_HINT: Kurang register dengan register (-)]
 sub.r64.mem         rex=W opcode=0x2B modrm=reg,mem ; [AI_HINT: Kurang register dengan memori (-)]
 sub.mem.r64         rex=W opcode=0x29 modrm=mem,reg ; [AI_HINT: Kurang memori dengan register (-)]
-sub.r64.imm32       rex=W opcode=0x81 modrm=5 imm32 ; [AI_HINT: Kurang register dengan angka 32-bit (-)]
-sub.mem.imm32       rex=W opcode=0x81 modrm=5 imm32 ; [AI_HINT: Kurang memori dengan angka 32-bit (-)]
 sub.r64.imm8        rex=W opcode=0x83 modrm=5 imm8  ; [AI_HINT: Kurang register dengan angka 8-bit (-)]
 sub.mem.imm8        rex=W opcode=0x83 modrm=5 imm8  ; [AI_HINT: Kurang memori dengan angka 8-bit (-)]
+sub.r64.imm32       rex=W opcode=0x81 modrm=5 imm32 ; [AI_HINT: Kurang register dengan angka 32-bit (-)]
+sub.mem.imm32       rex=W opcode=0x81 modrm=5 imm32 ; [AI_HINT: Kurang memori dengan angka 32-bit (-)]
 
 ; Subtract with Borrow (ZFC Support)
-sbb.r64.r64         rex=W opcode=0x19 modrm=reg,reg ; [AI_HINT: Kurang dengan Borrow (- - C)]
+sbb.r64.r64         rex=W opcode=0x19 modrm=rm,reg  ; [AI_HINT: Kurang dengan Borrow (- - C)]
 sbb.r64.mem         rex=W opcode=0x1B modrm=reg,mem ; [AI_HINT: Kurang dengan Borrow register dengan memori]
 sbb.mem.r64         rex=W opcode=0x19 modrm=mem,reg ; [AI_HINT: Kurang dengan Borrow memori dengan register]
-sbb.r64.imm32       rex=W opcode=0x81 modrm=3 imm32 ; [AI_HINT: Kurang dengan Borrow immediate 32-bit]
-sbb.mem.imm32       rex=W opcode=0x81 modrm=3 imm32 ; [AI_HINT: Kurang dengan Borrow memori immediate 32-bit]
 sbb.r64.imm8        rex=W opcode=0x83 modrm=3 imm8  ; [AI_HINT: Kurang dengan Borrow immediate 8-bit]
 sbb.mem.imm8        rex=W opcode=0x83 modrm=3 imm8  ; [AI_HINT: Kurang dengan Borrow memori immediate 8-bit]
+sbb.r64.imm32       rex=W opcode=0x81 modrm=3 imm32 ; [AI_HINT: Kurang dengan Borrow immediate 32-bit]
+sbb.mem.imm32       rex=W opcode=0x81 modrm=3 imm32 ; [AI_HINT: Kurang dengan Borrow memori immediate 32-bit]
 
 ; Multiplication (Signed)
-imul.r64.r64        rex=W opcode=0x0F,0xAF modrm=reg,reg ; [AI_HINT: Kali (signed) register dengan register (*)]
+imul.r64.r64        rex=W opcode=0x0F,0xAF modrm=reg,rm ; [AI_HINT: Kali (signed) register dengan register (*)]
 imul.r64.mem        rex=W opcode=0x0F,0xAF modrm=reg,mem ; [AI_HINT: Kali (signed) register dengan memori (*)]
-imul.r64.imm32      rex=W opcode=0x69 modrm=reg,reg imm32 ; [AI_HINT: Kali (signed) register dengan immediate 32-bit (*)]
+imul.r64.imm8       rex=W opcode=0x6B modrm=reg,rm imm8  ; [AI_HINT: Kali (signed) register dengan immediate 8-bit (*)]
+imul.r64.imm32      rex=W opcode=0x69 modrm=reg,rm imm32 ; [AI_HINT: Kali (signed) register dengan immediate 32-bit (*)]
 
 ; Multiplication (Unsigned)
 mul.r64             rex=W opcode=0xF7 modrm=4 ; [AI_HINT: Kali (unsigned) RAX dengan register (RAX * r64 -> RDX:RAX)]

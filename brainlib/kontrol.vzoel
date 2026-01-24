@@ -1,12 +1,12 @@
 ; Morph Kontrol Alur (Control Flow)
 
 ; Comparison
-cmp.r64.r64         rex=W opcode=0x39 modrm=reg,reg ; [AI_HINT: Bandingkan dua register]
+cmp.r64.r64         rex=W opcode=0x39 modrm=rm,reg  ; [AI_HINT: Bandingkan dua register]
 cmp.r64.imm32       rex=W opcode=0x81 modrm=7 imm32 ; [AI_HINT: Bandingkan register dengan angka 32-bit]
 cmp.r64.imm8        rex=W opcode=0x83 modrm=7 imm8  ; [AI_HINT: Bandingkan register dengan angka 8-bit]
 
 ; Test (Logical Compare)
-test.r64.r64        rex=W opcode=0x85 modrm=reg,reg ; [AI_HINT: Uji bit register (AND logic)]
+test.r64.r64        rex=W opcode=0x85 modrm=rm,reg  ; [AI_HINT: Uji bit register (AND logic)]
 
 ; Unconditional Jump
 jmp.rel32           opcode=0xE9 rel32 ; [AI_HINT: Lompat tanpa syarat (lompat)]
@@ -40,28 +40,28 @@ jnp.rel32           opcode=0x0F,0x8B rel32  ; [AI_HINT: Lompat jika Paritas Ganj
 jpo.rel32           opcode=0x0F,0x8B rel32  ; [AI_HINT: Alias jnp]
 
 ; Conditional Moves (CMOV)
-cmove.r64.r64       rex=W opcode=0x0F,0x44 modrm=reg,reg ; [AI_HINT: Salin register jika Sama/Nol]
-cmovz.r64.r64       rex=W opcode=0x0F,0x44 modrm=reg,reg ; [AI_HINT: Alias cmove]
-cmovne.r64.r64      rex=W opcode=0x0F,0x45 modrm=reg,reg ; [AI_HINT: Salin register jika Tidak Sama/Tidak Nol]
-cmovnz.r64.r64      rex=W opcode=0x0F,0x45 modrm=reg,reg ; [AI_HINT: Alias cmovne]
-cmovs.r64.r64       rex=W opcode=0x0F,0x48 modrm=reg,reg ; [AI_HINT: Salin register jika Negatif]
-cmovns.r64.r64      rex=W opcode=0x0F,0x49 modrm=reg,reg ; [AI_HINT: Salin register jika Positif]
-cmovl.r64.r64       rex=W opcode=0x0F,0x4C modrm=reg,reg ; [AI_HINT: Salin register jika Lebih Kecil (Signed)]
-cmovle.r64.r64      rex=W opcode=0x0F,0x4E modrm=reg,reg ; [AI_HINT: Salin register jika Lebih Kecil/Sama (Signed)]
-cmovg.r64.r64       rex=W opcode=0x0F,0x4F modrm=reg,reg ; [AI_HINT: Salin register jika Lebih Besar (Signed)]
-cmovge.r64.r64      rex=W opcode=0x0F,0x4D modrm=reg,reg ; [AI_HINT: Salin register jika Lebih Besar/Sama (Signed)]
-cmovb.r64.r64       rex=W opcode=0x0F,0x42 modrm=reg,reg ; [AI_HINT: Salin register jika Di Bawah (Unsigned)]
-cmovc.r64.r64       rex=W opcode=0x0F,0x42 modrm=reg,reg ; [AI_HINT: Alias cmovb (Carry)]
-cmovbe.r64.r64      rex=W opcode=0x0F,0x46 modrm=reg,reg ; [AI_HINT: Salin register jika Di Bawah/Sama (Unsigned)]
-cmova.r64.r64       rex=W opcode=0x0F,0x47 modrm=reg,reg ; [AI_HINT: Salin register jika Di Atas (Unsigned)]
-cmovae.r64.r64      rex=W opcode=0x0F,0x43 modrm=reg,reg ; [AI_HINT: Salin register jika Di Atas/Sama (Unsigned)]
-cmovnc.r64.r64      rex=W opcode=0x0F,0x43 modrm=reg,reg ; [AI_HINT: Alias cmovae (Not Carry)]
-cmovo.r64.r64       rex=W opcode=0x0F,0x40 modrm=reg,reg ; [AI_HINT: Salin register jika Overflow]
-cmovno.r64.r64      rex=W opcode=0x0F,0x41 modrm=reg,reg ; [AI_HINT: Salin register jika Tidak Overflow]
-cmovp.r64.r64       rex=W opcode=0x0F,0x4A modrm=reg,reg ; [AI_HINT: Salin register jika Paritas Genap]
-cmovpe.r64.r64      rex=W opcode=0x0F,0x4A modrm=reg,reg ; [AI_HINT: Alias cmovp]
-cmovnp.r64.r64      rex=W opcode=0x0F,0x4B modrm=reg,reg ; [AI_HINT: Salin register jika Paritas Ganjil]
-cmovpo.r64.r64      rex=W opcode=0x0F,0x4B modrm=reg,reg ; [AI_HINT: Alias cmovnp]
+cmove.r64.r64       rex=W opcode=0x0F,0x44 modrm=reg,rm ; [AI_HINT: Salin register jika Sama/Nol]
+cmovz.r64.r64       rex=W opcode=0x0F,0x44 modrm=reg,rm ; [AI_HINT: Alias cmove]
+cmovne.r64.r64      rex=W opcode=0x0F,0x45 modrm=reg,rm ; [AI_HINT: Salin register jika Tidak Sama/Tidak Nol]
+cmovnz.r64.r64      rex=W opcode=0x0F,0x45 modrm=reg,rm ; [AI_HINT: Alias cmovne]
+cmovs.r64.r64       rex=W opcode=0x0F,0x48 modrm=reg,rm ; [AI_HINT: Salin register jika Negatif]
+cmovns.r64.r64      rex=W opcode=0x0F,0x49 modrm=reg,rm ; [AI_HINT: Salin register jika Positif]
+cmovl.r64.r64       rex=W opcode=0x0F,0x4C modrm=reg,rm ; [AI_HINT: Salin register jika Lebih Kecil (Signed)]
+cmovle.r64.r64      rex=W opcode=0x0F,0x4E modrm=reg,rm ; [AI_HINT: Salin register jika Lebih Kecil/Sama (Signed)]
+cmovg.r64.r64       rex=W opcode=0x0F,0x4F modrm=reg,rm ; [AI_HINT: Salin register jika Lebih Besar (Signed)]
+cmovge.r64.r64      rex=W opcode=0x0F,0x4D modrm=reg,rm ; [AI_HINT: Salin register jika Lebih Besar/Sama (Signed)]
+cmovb.r64.r64       rex=W opcode=0x0F,0x42 modrm=reg,rm ; [AI_HINT: Salin register jika Di Bawah (Unsigned)]
+cmovc.r64.r64       rex=W opcode=0x0F,0x42 modrm=reg,rm ; [AI_HINT: Alias cmovb (Carry)]
+cmovbe.r64.r64      rex=W opcode=0x0F,0x46 modrm=reg,rm ; [AI_HINT: Salin register jika Di Bawah/Sama (Unsigned)]
+cmova.r64.r64       rex=W opcode=0x0F,0x47 modrm=reg,rm ; [AI_HINT: Salin register jika Di Atas (Unsigned)]
+cmovae.r64.r64      rex=W opcode=0x0F,0x43 modrm=reg,rm ; [AI_HINT: Salin register jika Di Atas/Sama (Unsigned)]
+cmovnc.r64.r64      rex=W opcode=0x0F,0x43 modrm=reg,rm ; [AI_HINT: Alias cmovae (Not Carry)]
+cmovo.r64.r64       rex=W opcode=0x0F,0x40 modrm=reg,rm ; [AI_HINT: Salin register jika Overflow]
+cmovno.r64.r64      rex=W opcode=0x0F,0x41 modrm=reg,rm ; [AI_HINT: Salin register jika Tidak Overflow]
+cmovp.r64.r64       rex=W opcode=0x0F,0x4A modrm=reg,rm ; [AI_HINT: Salin register jika Paritas Genap]
+cmovpe.r64.r64      rex=W opcode=0x0F,0x4A modrm=reg,rm ; [AI_HINT: Alias cmovp]
+cmovnp.r64.r64      rex=W opcode=0x0F,0x4B modrm=reg,rm ; [AI_HINT: Salin register jika Paritas Ganjil]
+cmovpo.r64.r64      rex=W opcode=0x0F,0x4B modrm=reg,rm ; [AI_HINT: Alias cmovnp]
 
 ; Set Byte on Condition (SETcc)
 sete.r64            opcode=0x0F,0x94 modrm=0 ; [AI_HINT: Set byte 1 jika Sama/Nol, 0 jika tidak]
