@@ -108,7 +108,9 @@ start:
 
     ; Read Flags (Byte)
     lodsb
-    ; TODO: Handle flags (REX.W, RegInOp)
+    mov r12, rax ; Save Flags in r12 (callee-saved, safe?)
+    ; Note: We should verify if r12 is safe to use.
+    ; FASM conventions? We are in main loop, we can use r12.
 
     ; Read Opcode Len (Byte)
     xor rcx, rcx
@@ -116,10 +118,12 @@ start:
     mov cl, al ; cl = opcode len
 
     ; Read Opcode Bytes (3 Bytes) and Write to Output
+    ; Note: The table always has 3 bytes for opcode, even if length is less.
+    ; We must skip the unused bytes.
     xor rdx, rdx
 .write_opcode:
     cmp rdx, rcx
-    je .opcode_done
+    je .skip_padding
     lodsb
     mov rbx, [output_ptr]
     mov [rbx], al
@@ -127,11 +131,132 @@ start:
     inc rdx
     jmp .write_opcode
 
+.skip_padding:
+    ; We read 'rcx' bytes. The field is 3 bytes wide.
+    ; We need to skip (3 - rcx) bytes.
+    mov rbx, 3
+    sub rbx, rcx
+    add rsi, rbx
+
 .opcode_done:
     ; Read ModRM Type
     lodsb
-    ; TODO: Handle ModRM
+    cmp al, 0
+    je .check_immediates
 
+    ; If al != 0, we need to parse operands.
+    ; al = 1: rm,reg
+    ; al = 2: reg,rm
+    ; al >= 0x10: Extension (rm with opcode ext)
+
+    cmp al, 0x10
+    jae .modrm_extension
+
+    push rax ; Save ModRM Type
+
+    ; Parse First Operand (RM if type 1, REG if type 2)
+    call get_token ; Token 1 (e.g. rax)
+    call parse_register
+    mov r8, rax ; r8 = First Register ID
+
+    ; Expect Comma
+    call get_token
+    ; TODO: Check if it is comma
+
+    ; Parse Second Operand
+    call get_token ; Token 2 (e.g. rbx)
+    call parse_register
+    mov r9, rax ; r9 = Second Register ID
+
+    pop rax ; Restore ModRM Type
+
+    ; Construct ModRM Byte
+    ; ModRM = Mod(2) | Reg(3) | RM(3)
+    ; Mod = 11b (0xC0) for Register Direct Mode
+
+    cmp al, 1 ; rm,reg
+    je .modrm_rm_reg
+
+    ; .modrm_reg_rm (Type 2)
+    ; First op (r8) is REG, Second op (r9) is RM
+    mov rbx, r8
+    shl rbx, 3 ; REG << 3
+    or rbx, 0xC0
+    or rbx, r9 ; OR RM
+    jmp .write_modrm
+
+.modrm_rm_reg:
+    ; First op (r8) is RM, Second op (r9) is REG
+    mov rbx, r9
+    shl rbx, 3 ; REG << 3
+    or rbx, 0xC0
+    or rbx, r8 ; OR RM
+    jmp .write_modrm
+
+.modrm_extension:
+    ; al contains 0x10 + Ext
+    sub al, 0x10
+    mov rdx, rax ; rdx = Extension (Reg field)
+
+    ; Parse One Operand (RM)
+    call get_token
+    call parse_register
+    mov r8, rax ; r8 = RM
+
+    ; Build ModRM: 0xC0 | (rdx << 3) | r8
+    mov rbx, rdx
+    shl rbx, 3
+    or rbx, 0xC0
+    or rbx, r8
+
+.write_modrm:
+    mov rax, rbx
+    mov rbx, [output_ptr]
+    mov [rbx], al
+    inc qword [output_ptr]
+
+.check_immediates:
+    ; Check r12 (Flags)
+    test r12, 4 ; Imm8
+    jnz .parse_imm8
+    test r12, 8 ; Imm32
+    jnz .parse_imm32
+
+    jmp .assemble_loop
+
+.parse_imm8:
+    ; Parse immediate operand
+    ; It might be after a comma if there was a ModRM operand
+    ; Check if next token is comma?
+    ; Simplified: Just call get_token. If it is comma, call again.
+
+    call get_token
+    ; If token is comma, read next
+    lea rdi, [token_buffer]
+    cmp byte [rdi], ','
+    jne .do_parse_imm8
+    call get_token
+
+.do_parse_imm8:
+    call parse_int
+    mov rbx, [output_ptr]
+    mov [rbx], al ; Store byte
+    inc qword [output_ptr]
+    jmp .assemble_loop
+
+.parse_imm32:
+    call get_token
+    ; If token is comma, read next
+    lea rdi, [token_buffer]
+    cmp byte [rdi], ','
+    jne .do_parse_imm32
+    call get_token
+
+.do_parse_imm32:
+    call parse_int
+    mov rbx, [output_ptr]
+    mov [rbx], eax ; Store 4 bytes (eax)
+    add qword [output_ptr], 4
     jmp .assemble_loop
 
 .unknown_token:
@@ -187,7 +312,7 @@ start:
     mov rax, sys_write
     mov rdi, 1
     lea rsi, [msg_done]
-    mov rdx, 14
+    mov rdx, 16
     syscall
 
     mov rax, sys_exit
@@ -330,6 +455,100 @@ get_token:
 
 .eof:
     mov rax, 0
+    ret
+
+parse_register:
+    ; Input: token_buffer
+    ; Output: rax = register ID (0-15)
+    ; For now, simplistic check:
+    ; rax=0, rcx=1, rdx=2, rbx=3, rsp=4, rbp=5, rsi=6, rdi=7
+    ; r8=8 ... r15=15
+
+    lea rdi, [token_buffer]
+    cmp byte [rdi], 'r'
+    jne .unknown_reg
+
+    ; Check 2nd char
+    mov al, [rdi+1]
+
+    cmp al, 'a' ; rax
+    je .reg_rax
+    cmp al, 'c' ; rcx
+    je .reg_rcx
+    cmp al, 'd' ; rdx, rdi
+    je .reg_d_check
+    cmp al, 'b' ; rbx, rbp
+    je .reg_b_check
+    cmp al, 's' ; rsi, rsp
+    je .reg_s_check
+
+    ; r8-r15 handling (simplified, maybe handled later)
+    jmp .unknown_reg
+
+.reg_d_check:
+    cmp byte [rdi+2], 'x' ; rdx
+    je .reg_rdx
+    cmp byte [rdi+2], 'i' ; rdi
+    je .reg_rdi
+    jmp .unknown_reg
+
+.reg_b_check:
+    cmp byte [rdi+2], 'x' ; rbx
+    je .reg_rbx
+    cmp byte [rdi+2], 'p' ; rbp
+    je .reg_rbp
+    jmp .unknown_reg
+
+.reg_s_check:
+    cmp byte [rdi+2], 'i' ; rsi
+    je .reg_rsi
+    cmp byte [rdi+2], 'p' ; rsp
+    je .reg_rsp
+    jmp .unknown_reg
+
+.reg_rax: mov rax, 0
+    ret
+.reg_rcx: mov rax, 1
+    ret
+.reg_rdx: mov rax, 2
+    ret
+.reg_rbx: mov rax, 3
+    ret
+.reg_rsp: mov rax, 4
+    ret
+.reg_rbp: mov rax, 5
+    ret
+.reg_rsi: mov rax, 6
+    ret
+.reg_rdi: mov rax, 7
+    ret
+
+.unknown_reg:
+    ; Fail for now (return 0 or crash safely)
+    mov rax, -1
+    ret
+
+parse_int:
+    ; Input: token_buffer
+    ; Output: rax = integer value
+    lea rsi, [token_buffer]
+    xor rax, rax
+    xor rcx, rcx
+
+.parse_int_loop:
+    mov cl, [rsi]
+    cmp cl, 0
+    je .parse_int_done
+
+    sub cl, '0'
+    ; TODO: Check if valid digit
+    imul rax, 10
+    add rax, rcx
+
+    inc rsi
+    jmp .parse_int_loop
+
+.parse_int_done:
     ret
 
 strlen:
