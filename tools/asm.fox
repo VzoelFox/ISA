@@ -1,0 +1,113 @@
+format ELF64 executable
+entry start
+
+; --- CONSTANTS ---
+sys_read    = 0
+sys_write   = 1
+sys_open    = 2
+sys_close   = 3
+sys_fstat   = 5
+sys_mmap    = 9
+sys_exit    = 60
+
+O_RDONLY    = 0
+PROT_READ   = 1
+MAP_PRIVATE = 2
+
+; --- CODE ---
+start:
+    pop rcx
+    cmp rcx, 2
+    jl usage
+
+    pop rdi
+    pop rdi
+    mov [input_filename], rdi
+
+    ; Open
+    mov rax, sys_open
+    mov rdi, [input_filename]
+    mov rsi, O_RDONLY
+    mov rdx, 0
+    syscall
+
+    cmp rax, 0
+    jl error_open
+    mov [input_fd], rax
+
+    ; Fstat
+    mov rax, sys_fstat
+    mov rdi, [input_fd]
+    lea rsi, [stat_buf]
+    syscall
+
+    mov rax, [stat_buf + 48]
+    mov [input_size], rax
+
+    ; Mmap
+    mov rax, sys_mmap
+    mov rdi, 0
+    mov rsi, [input_size]
+    mov rdx, PROT_READ
+    mov r10, MAP_PRIVATE
+    mov r8, [input_fd]
+    mov r9, 0
+    syscall
+
+    cmp rax, -1
+    je error_mmap
+    mov [source_ptr], rax
+
+    ; Exit
+    mov rax, sys_exit
+    xor rdi, rdi
+    syscall
+
+usage:
+    mov rax, sys_write
+    mov rdi, 1
+    lea rsi, [msg_usage]
+    mov rdx, 20
+    syscall
+    jmp exit
+
+error_open:
+    mov rax, sys_write
+    mov rdi, 1
+    lea rsi, [msg_err]
+    mov rdx, 10
+    syscall
+    jmp exit
+
+error_mmap:
+    mov rax, sys_write
+    mov rdi, 1
+    lea rsi, [msg_err]
+    mov rdx, 10
+    syscall
+    jmp exit
+
+exit:
+    mov rax, sys_exit
+    mov rdi, 1
+    syscall
+
+; --- DATA ---
+input_filename db 0,0,0,0,0,0,0,0
+input_fd db 0,0,0,0,0,0,0,0
+input_size db 0,0,0,0,0,0,0,0
+source_ptr db 0,0,0,0,0,0,0,0
+
+msg_usage db "Usage: asm.fox <in>", 10
+msg_err db "Error detected.", 10
+
+stat_buf:
+db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
+db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
+db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
+db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
+db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
+db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
+db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
+db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
+db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
