@@ -1,0 +1,23 @@
+; Morph Routine Primitives (Pondasi Rutin & Sinkronisasi)
+; [AI_HINT: Instruksi dasar untuk manajemen stack, context switching, dan sinkronisasi]
+
+; --- Stack Frame Management ---
+enter               opcode=0xC8 imm16,0 ; [AI_HINT: Buat stack frame baru (push rbp, mov rbp, rsp, sub rsp, imm)]
+leave               opcode=0xC9         ; [AI_HINT: Hancurkan stack frame (mov rsp, rbp, pop rbp)]
+
+; --- Processor State & Flags ---
+pushfq              opcode=0x9C ; [AI_HINT: Dorong register RFLAGS ke stack]
+popfq               opcode=0x9D ; [AI_HINT: Ambil nilai stack ke register RFLAGS]
+sahf                opcode=0x9E ; [AI_HINT: Simpan AH ke Flags (SF, ZF, AF, PF, CF)]
+lahf                opcode=0x9F ; [AI_HINT: Muat Flags ke AH]
+
+; --- Synchronization & Atomicity ---
+lock                opcode=0xF0 ; [AI_HINT: Prefix kunci bus untuk operasi atomik]
+pause               opcode=0xF3,0x90 ; [AI_HINT: Beri jeda pada spin-loop (hemat daya)]
+mfence              opcode=0x0F,0xAE,0xF0 ; [AI_HINT: Memory Fence (Tunggu semua akses memori selesai)]
+lfence              opcode=0x0F,0xAE,0xE8 ; [AI_HINT: Load Fence (Tunggu akses baca selesai)]
+sfence              opcode=0x0F,0xAE,0xF8 ; [AI_HINT: Store Fence (Tunggu akses tulis selesai)]
+
+; --- System & Diagnostics ---
+rdtsc               opcode=0x0F,0x31 ; [AI_HINT: Baca Time-Stamp Counter ke EDX:EAX]
+cpuid               opcode=0x0F,0xA2 ; [AI_HINT: Identifikasi fitur CPU (input: EAX)]

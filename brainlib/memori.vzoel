@@ -1,0 +1,48 @@
+; Morph Memory Primitives (Operasi Memori Dasar)
+; [AI_HINT: Instruksi level ISA untuk manipulasi blok memori secara efisien]
+
+; --- Direction Flags ---
+; Mengatur arah operasi string (Auto-increment vs Auto-decrement)
+cld                 opcode=0xFC ; [AI_HINT: Clear Direction Flag (Increment/Maju)]
+std                 opcode=0xFD ; [AI_HINT: Set Direction Flag (Decrement/Mundur)]
+
+; --- Prefixes (Pengulangan) ---
+; Digunakan sebelum instruksi string (movs, stos, cmps, scas)
+rep                 opcode=0xF3 ; [AI_HINT: Ulangi selama RCX > 0]
+repe                opcode=0xF3 ; [AI_HINT: Ulangi selama RCX > 0 DAN Sama (Equal)]
+repz                opcode=0xF3 ; [AI_HINT: Alias repe]
+repne               opcode=0xF2 ; [AI_HINT: Ulangi selama RCX > 0 DAN Tidak Sama (Not Equal)]
+repnz               opcode=0xF2 ; [AI_HINT: Alias repne]
+
+; --- String Operations (Operasi Blok) ---
+; Menggunakan register implisit: RSI (Source), RDI (Dest), RCX (Count)
+
+; Move Data String (Copy)
+movsb               opcode=0xA4 ; [AI_HINT: Salin byte dari [RSI] ke [RDI]]
+movsw               opcode=0x66,0xA5 ; [AI_HINT: Salin word (2 byte)]
+movsd               opcode=0xA5 ; [AI_HINT: Salin dword (4 byte)]
+movsq               rex=W opcode=0xA5 ; [AI_HINT: Salin qword (8 byte) dari [RSI] ke [RDI]]
+
+; Store Data String (Fill/Set)
+stosb               opcode=0xAA ; [AI_HINT: Simpan AL ke [RDI]]
+stosw               opcode=0x66,0xAB ; [AI_HINT: Simpan AX ke [RDI]]
+stosd               opcode=0xAB ; [AI_HINT: Simpan EAX ke [RDI]]
+stosq               rex=W opcode=0xAB ; [AI_HINT: Simpan RAX ke [RDI]]
+
+; Load Data String (Read)
+lodsb               opcode=0xAC ; [AI_HINT: Muat byte dari [RSI] ke AL]
+lodsw               opcode=0x66,0xAD ; [AI_HINT: Muat word dari [RSI] ke AX]
+lodsd               opcode=0xAD ; [AI_HINT: Muat dword dari [RSI] ke EAX]
+lodsq               rex=W opcode=0xAD ; [AI_HINT: Muat qword dari [RSI] ke RAX]
+
+; Compare Data String (Compare)
+cmpsb               opcode=0xA6 ; [AI_HINT: Bandingkan byte [RSI] dengan [RDI]]
+cmpsw               opcode=0x66,0xA7 ; [AI_HINT: Bandingkan word]
+cmpsd               opcode=0xA7 ; [AI_HINT: Bandingkan dword]
+cmpsq               rex=W opcode=0xA7 ; [AI_HINT: Bandingkan qword [RSI] dengan [RDI]]
+
+; Scan Data String (Search)
+scasb               opcode=0xAE ; [AI_HINT: Bandingkan AL dengan [RDI]]
+scasw               opcode=0x66,0xAF ; [AI_HINT: Bandingkan AX dengan [RDI]]
+scasd               opcode=0xAF ; [AI_HINT: Bandingkan EAX dengan [RDI]]
+scasq               rex=W opcode=0xAF ; [AI_HINT: Bandingkan RAX dengan [RDI]]
