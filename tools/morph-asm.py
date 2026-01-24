@@ -46,21 +46,52 @@ class Immediate(Operand):
 class Memory(Operand):
     def __init__(self, text):
         super().__init__(text)
-        # Parse [base + index*scale + disp] logic roughly
-        # Supported formats: [label], [reg], [reg+disp]
+        # Parse [base + index*scale + disp]
         content = text.strip()[1:-1].strip()
         self.base = None
+        self.index = None
+        self.scale = 0
+        self.disp = 0
         self.label = None
+        self.offset = 0 # Additional offset for label
 
-        # Check if it's a known register
-        if content.lower() in REGISTERS:
-            self.base = Register(content)
-        elif content[0].isalpha():
-            # Assume label
-            self.label = content
-        else:
-            # Complex parsing skipped for now
-            pass
+        # Tokenize by '+' but handle complex expr
+        # Assume format: part1 + part2 ...
+
+        parts = [p.strip() for p in content.split('+')]
+
+        for p in parts:
+            if '*' in p:
+                # index*scale
+                sub = p.split('*')
+                if len(sub) == 2:
+                    s0 = sub[0].strip()
+                    s1 = sub[1].strip()
+                    if s0.lower() in REGISTERS:
+                        self.index = Register(s0)
+                        self.scale = int(s1)
+                    elif s1.lower() in REGISTERS:
+                        self.index = Register(s1)
+                        self.scale = int(s0)
+            elif p.lower() in REGISTERS:
+                reg = Register(p)
+                if not self.base:
+                    self.base = reg
+                else:
+                    # Treat second register as index with scale 1
+                    self.index = reg
+                    self.scale = 1
+            elif p and (p[0].isdigit() or p.startswith('-') or p.startswith('0x')):
+                try:
+                    val = int(p, 0)
+                    self.disp += val
+                    self.offset += val
+                except:
+                    self.label = p
+            elif p and p[0].isalpha():
+                self.label = p
+            else:
+                pass
 
 class InstructionDef:
     def __init__(self, mnemonic, properties):
@@ -92,11 +123,6 @@ class InstructionDef:
                 if not isinstance(op, Immediate): return False
                 # Size check
                 val = op.value
-                # Resolve value if possible? No, check_match happens before resolution.
-                # But we have parsed values in Immediate.
-                # If it's a string (label), assume it fits?
-                # Labels are usually addresses (64-bit) or offsets.
-                # If label, we can't be sure, but usually we match strictly.
                 if isinstance(val, str): return True # Assume fits for labels/constants not yet resolved
 
                 if sig == 'imm8':
@@ -105,25 +131,13 @@ class InstructionDef:
                      if not (-32768 <= val <= 65535): return False
                 elif sig == 'imm32':
                      # imm32 in 64-bit context is often sign-extended
-                     if not (-2147483648 <= val <= 4294967295): return False
-                     # If it's strictly sign-extended context (like mov r64, imm32),
-                     # values > 2^31-1 but < 2^32 might be represented as negative?
-                     # Python ints are infinite precision.
-                     # 0xFFFFFFFF is 4294967295.
-                     # If instruction expects signed imm32, we should check signed range.
-                     # mov r64, imm32 (C7) sign extends.
-                     # So 0xFFFFFFFF becomes -1 (0xFF...FF).
-                     # If user meant 0x00...00FFFFFFFF, that is NOT representable by C7 if it sign extends!
-                     # Wait. mov r/m64, imm32 sign extends.
-                     # So valid range is [-2^31, 2^31-1].
-                     # If user writes 0xFFFFFFFF, it interprets as -1.
-                     # If user wants +4294967295, they must use mov r64, imm64 (B8).
-                     # So strictly, imm32 should match only signed 32-bit range.
                      if not (-2147483648 <= val <= 2147483647): return False
 
             elif sig == 'rel32':
-                 # Accepts label or imm
-                 if not (isinstance(op, Immediate) or isinstance(op, Memory)): return True # Wait, rel32 is usually a label (Immediate with string value)
+                 # Accepts label or imm, NOT register
+                 if isinstance(op, Register): return False
+                 if not (isinstance(op, Immediate) or isinstance(op, Memory)): return True
+                 # Actually Memory should strictly not be rel32 usually, but let's keep it loose except for Reg
                  pass
             # Add more checks as needed
         return True
@@ -135,6 +149,8 @@ class MorphAssembler:
         self.labels = {} # name -> address
         self.output = bytearray()
         self.relocations = [] # list of (offset, type, label)
+        self.output_format = 'bin' # 'bin' or 'elf64'
+        self.entry_point = None
 
     def load_isa(self):
         vzoel_files = glob.glob(os.path.join(BRAINLIB_DIR, "*.vzoel"))
@@ -153,7 +169,8 @@ class MorphAssembler:
                             k, v = part.split('=', 1)
                             props[k] = v
                         else:
-                            pass # tags
+                            # Store tags as boolean properties
+                            props[part] = True
                     instr = InstructionDef(mnemonic, props)
                     base = instr.base_mnemonic
                     if base not in self.instructions: self.instructions[base] = []
@@ -174,6 +191,10 @@ class MorphAssembler:
 
         # Pass 1: Address calculation & Label collection
         current_addr = 0
+        # If ELF, start code at a standard virtual address (e.g., 0x400000 + headers)
+        # But for simplicity, we assume one segment readable executable at 0x400000
+        base_addr = 0
+
         parsed_instructions = []
 
         for line in lines:
@@ -193,8 +214,6 @@ class MorphAssembler:
                 k = k.strip()
                 v = v.strip()
                 if v == '$ - msg': # Hardcoded hack for the example for now
-                    # We can't know the value yet. Postpone?
-                    # For now, let's just handle this in resolution
                     self.constants[k] = "EXPR_LEN_MSG"
                 else:
                      try: self.constants[k] = int(v, 0)
@@ -204,6 +223,23 @@ class MorphAssembler:
             # Parse Mnemonic
             parts = line.split(maxsplit=1)
             mnemonic = parts[0]
+
+            # Handle Directives
+            if mnemonic == 'format':
+                fmt = parts[1] if len(parts) > 1 else ""
+                if fmt.startswith('ELF64'):
+                    self.output_format = 'elf64'
+                    base_addr = 0x400000 # Standard base
+                    current_addr = base_addr + 120 # Offset by header size
+                continue
+
+            if mnemonic == 'entry':
+                self.entry_point = parts[1].strip()
+                continue
+
+            if mnemonic == 'segment':
+                # Ignore segment directives for now, assume one flat segment
+                continue
 
             # Check for label without colon (heuristic)
             # If first word is not a known mnemonic but second word is (or is db/use64)
@@ -305,7 +341,7 @@ class MorphAssembler:
             parsed_instructions[-1]['size'] = size
 
         # Pass 2: Final Encoding (Resolve labels)
-        self.output = bytearray()
+        code_output = bytearray()
 
         # Patch constant EXPR_LEN_MSG if needed
         # Assuming msg is a label
@@ -323,11 +359,76 @@ class MorphAssembler:
 
         for p in parsed_instructions:
             if p['type'] == 'data':
-                self.output.extend(p['bytes'])
+                code_output.extend(p['bytes'])
             elif p['type'] == 'instr':
                 # Re-encode with resolved labels
                 encoded = self.encode_instruction(p['def'], p['operands'], p['addr'], dry_run=False)
-                self.output.extend(encoded)
+                code_output.extend(encoded)
+
+        if self.output_format == 'elf64':
+            self.output = self.create_elf_header(code_output, base_addr)
+        else:
+            self.output = code_output
+
+    def create_elf_header(self, code, base_addr):
+        # Create minimal ELF64 executable header
+        # ELF Header (64 bytes) + Program Header (56 bytes) = 120 bytes
+        # Code starts after headers.
+
+        # Determine Entry Point
+        # Pass 1 labels already include +120 offset now.
+        entry_addr = self.labels.get(self.entry_point, base_addr + 120) if self.entry_point else (base_addr + 120)
+
+        # Construct ELF Header
+        # Format <4s 5B 7x 2H I 3Q I 6H is cleaner for standard ELF64, but let's stick to H/I where possible.
+        # 4s (Magic)
+        # 5B (Class, Data, Version, OSABI, ABIVersion)
+        # 7x (Pad)
+        # 2H (Type, Machine)
+        # I (Version)
+        # 3Q (Entry, PhdrOff, ShdrOff)
+        # I (Flags)
+        # 6H (EhSize, PhEntSize, PhNum, ShEntSize, ShNum, ShStrNdx)
+
+        elf_header = struct.pack('<4sBBBBB7xHHIQQQIHHHHHH',
+            b'\x7fELF',
+            2, # Class: 64-bit
+            1, # Data: Little endian
+            1, # Version: 1
+            0, # OS ABI: System V
+            0, # ABI Version
+            # Pad is handled by 7x
+            2, # Type: Executable (ET_EXEC)
+            0x3E, # Machine: AMD64
+            1, # Version: 1
+            entry_addr, # Entry Point
+            64, # Phdr offset (immediately after ELF header)
+            0, # Shdr offset
+            0, # Flags
+            64, # Header size
+            56, # Phdr size
+            1, # Phdr count
+            0, # Shdr size
+            0, # Shdr count
+            0  # String table index
+        )
+
+        # Program Header
+        file_size = 120 + len(code)
+        mem_size = file_size
+
+        phdr = struct.pack('<2I6Q',
+            1, # Type: LOAD
+            7, # Flags: R W E (Read, Write, Execute)
+            0, # Offset
+            base_addr, # VAddr
+            base_addr, # PAddr
+            file_size, # FileSize
+            mem_size, # MemSize
+            0x1000 # Align
+        )
+
+        return elf_header + phdr + code
 
     def resolve_value(self, op):
         if isinstance(op, Immediate):
@@ -347,7 +448,7 @@ class MorphAssembler:
 
     def encode_instruction(self, instr_def, operands, addr, dry_run=False):
         # Implementation of encoding logic based on .vzoel properties
-        # This needs to handle REX, ModRM, Imm, Disp
+        # This needs to handle REX, ModRM, Imm, Disp, SIB
 
         out = bytearray()
 
@@ -360,10 +461,8 @@ class MorphAssembler:
         reg_code = 0
         rm_code = 0
 
-        # Determine Register Codes for REX and ModRM
-        # Logic depends on modrm string (e.g. "reg,mem")
-
         modrm_byte = None
+        sib_byte = None
         has_modrm = False
 
         if instr_def.modrm:
@@ -375,31 +474,21 @@ class MorphAssembler:
             spec = instr_def.modrm.split(',')
 
             # Mapping logic
-            # modrm=reg,mem -> op0 is reg, op1 is mem
-            # modrm=0 -> reg field is 0.
-
-            # Find which operand maps to reg field and which to rm field
             reg_operand = None
             rm_operand = None
 
             if len(spec) == 2:
-                # "reg,mem" or "mem,reg"
-                # The first part corresponds to Operand 0
-                # The second part corresponds to Operand 1
-
+                # "reg,mem" or "mem,reg" or "rm,reg" or "reg,rm"
                 for i, role in enumerate(spec):
                     op = operands[i]
                     if role == 'reg':
                         if isinstance(op, Register):
                             reg = op.id
                             reg_operand = op
-                    elif role == 'mem':
-                         # ModRM logic for memory
+                    elif role == 'mem' or role == 'rm':
                          rm_operand = op
-                    elif role == 'rm':
-                         # Explicit R/M field (register)
-                         if isinstance(op, Register):
-                             rm_operand = op
+                         if role == 'rm' and isinstance(op, Register):
+                             rm = op.id
 
             elif len(spec) == 1:
                 # "0" or "reg" or "4"
@@ -408,37 +497,95 @@ class MorphAssembler:
                     # Operand 0 must be the RM
                     rm_operand = operands[0]
                 else:
-                    # Generic handling?
                     pass
 
-            # Construct ModRM
+            # Construct ModRM & SIB
             if rm_operand and isinstance(rm_operand, Memory):
-                if rm_operand.label:
+                if hasattr(rm_operand, 'label') and rm_operand.label:
                      # RIP relative
                      mod = 0b00
                      rm = 0b101
-                     # Calculate disp
-                     target = self.labels.get(rm_operand.label, 0)
-                     # rip is addr + instruction_len.
-                     # Wait, instruction len is unknown during dry_run.
-                     # Assume 7 bytes?
-                     # encode_instruction calls recursively? No.
-                     # For dry_run, we can just output placeholders.
-                     # For real run, we need length.
-                     # Circular dependency.
-                     # Usually handled by assuming long disp (4 bytes).
-                     disp = target - (addr + 7) # 7 is guess
+                     # Calculate disp later
                 else:
-                    # [reg]
-                    mod = 0
-                    rm = rm_operand.base.id
+                    # [Base + Index*Scale + Disp]
+                    base_reg = rm_operand.base
+                    index_reg = rm_operand.index
+                    scale = rm_operand.scale
+
+                    need_sib = False
+
+                    # Determine if SIB needed
+                    if index_reg: need_sib = True
+                    if base_reg and (base_reg.id & 7) == 4: need_sib = True # RSP/R12 needs SIB
+                    if base_reg and (base_reg.id & 7) == 5 and not rm_operand.disp:
+                        # RBP/R13 as base without disp needs mod=1/2 or special mod=0 handling
+                        # Actually [rbp] is RIP relative if mod=0.
+                        # If we want [rbp], we must use mod=1 and disp=0 (disp8).
+                        # Let's handle this in displacement logic.
+                        pass
+
+                    if need_sib:
+                        rm = 4 # Indicate SIB follows
+
+                        ss = 0
+                        if scale == 2: ss = 1
+                        elif scale == 4: ss = 2
+                        elif scale == 8: ss = 3
+
+                        idx = 4 # None (RSP)
+                        if index_reg:
+                            idx = index_reg.id
+                            if idx > 7: rex |= 0x02 # REX.X
+
+                        base = 5 # None (RBP) -> Mod=0 means disp32 only
+                        if base_reg:
+                            base = base_reg.id
+                            if base > 7: rex |= 0x01 # REX.B
+
+                        sib_byte = (ss << 6) | ((idx & 7) << 3) | (base & 7)
+
+                        # Mod selection
+                        if rm_operand.disp == 0 and (base & 7) != 5:
+                            mod = 0
+                        elif -128 <= rm_operand.disp <= 127:
+                            mod = 1
+                        else:
+                            mod = 2
+
+                        # Exception: [r12] (base=4) needs SIB. mod=0.
+                        # Exception: [rbp] (base=5) needs mod=1 + disp0 if disp=0.
+                        if (base & 7) == 5 and mod == 0:
+                            mod = 1 # Force disp8=0
+
+                    else:
+                        # No SIB
+                        if base_reg:
+                            rm = base_reg.id
+                            if rm > 7: rex |= 0x01 # REX.B
+
+                            # Mod selection
+                            if rm_operand.disp == 0 and (rm & 7) != 5:
+                                mod = 0
+                            elif -128 <= rm_operand.disp <= 127:
+                                mod = 1
+                            else:
+                                mod = 2
+
+                            if (rm & 7) == 5 and mod == 0:
+                                mod = 1 # Force disp8=0 for RBP/R13 base
+                        else:
+                            # Direct address (disp32)
+                            mod = 0
+                            rm = 4 # SIB
+                            sib_byte = 0x25 # (00 100 101) -> Scale 1, Index None, Base None/disp32
+
             elif rm_operand and isinstance(rm_operand, Register):
                 mod = 0b11
                 rm = rm_operand.id
+                if rm > 7: rex |= 0x01 # REX.B
 
-            # REX bits
-            if reg > 7: rex |= 0x04 # REX.R
-            if rm > 7: rex |= 0x01 # REX.B
+            # REX.R
+            if reg > 7: rex |= 0x04
 
             reg_code = reg & 7
             rm_code = rm & 7
@@ -448,14 +595,12 @@ class MorphAssembler:
         # Opcode + reg_in_op
         ops = list(instr_def.opcode)
         if 'reg_in_op' in instr_def.properties:
-            # Add reg index to last opcode byte
-            # Op 0 corresponds to Op 0?
             op0 = operands[0]
             if isinstance(op0, Register):
                 ops[-1] += (op0.id & 7)
-                if op0.id > 7: rex |= 0x01 # REX.B extension for opcode reg?
+                if op0.id > 7: rex |= 0x01 # REX.B
 
-        # Emit REX if needed or if forced (W)
+        # Emit REX
         if rex:
             out.append(rex)
 
@@ -463,36 +608,42 @@ class MorphAssembler:
 
         if has_modrm:
             out.append(modrm_byte)
-            # Emit Disp if RIP relative
-            if rm_code == 5 and (modrm_byte >> 6) == 0:
-                 # Calculate real displacement
-                 # We need total length to be correct.
-                 # Current length so far: len(out) + 4 (disp) + imm_size
-                 # This requires knowing imm size.
-                 imm_size = 0
-                 for op in operands:
-                     if isinstance(op, Immediate):
-                         # check def signature for size
-                         # hacky: look for imm32 in signature
-                         if 'imm32' in instr_def.operands_signature: imm_size = 4
-                         elif 'imm8' in instr_def.operands_signature: imm_size = 1
-                         elif 'imm64' in instr_def.operands_signature: imm_size = 8
+            if sib_byte is not None:
+                out.append(sib_byte)
 
-                 total_len = len(out) + 4 + imm_size
-                 target = 0
-                 # Re-find label
-                 for op in operands:
-                     if isinstance(op, Memory) and op.label:
-                         target = self.labels.get(op.label, 0)
+            # Emit Disp
+            if rm_operand and isinstance(rm_operand, Memory):
+                if hasattr(rm_operand, 'label') and rm_operand.label:
+                     # RIP relative
+                     target = self.labels.get(rm_operand.label, 0)
+                     offset = getattr(rm_operand, 'offset', 0)
+                     target += offset
 
-                 disp = target - (addr + total_len)
-                 out.extend(struct.pack('<i', disp))
+                     # disp = target - (addr + len)
+                     # Estimate length:
+                     imm_size = 0
+                     for op in operands:
+                         if isinstance(op, Immediate):
+                             sig = instr_def.operands_signature[operands.index(op)]
+                             if 'imm32' in sig: imm_size = 4
+                             elif 'imm8' in sig: imm_size = 1
+                             elif 'imm64' in sig: imm_size = 8
+
+                     total_len = len(out) + 4 + imm_size
+                     disp = target - (addr + total_len)
+                     out.extend(struct.pack('<i', disp))
+                else:
+                    # SIB/Normal Disp
+                    if mod == 1:
+                        out.append(rm_operand.disp & 0xFF)
+                    elif mod == 2 or (mod == 0 and (rm & 7) == 5 and not need_sib) or (sib_byte is not None and (sib_byte & 7) == 5 and mod == 0):
+                        # 32-bit disp cases
+                        out.extend(struct.pack('<i', rm_operand.disp))
 
         # Emit Immediates
         for i, op in enumerate(operands):
             if isinstance(op, Immediate):
                  val = self.resolve_value(op)
-                 # Determine size from signature
                  sig = instr_def.operands_signature[i]
                  if 'imm32' in sig:
                      out.extend(struct.pack('<I', val & 0xFFFFFFFF))
@@ -500,6 +651,11 @@ class MorphAssembler:
                      out.append(val & 0xFF)
                  elif 'imm64' in sig:
                      out.extend(struct.pack('<Q', val & 0xFFFFFFFFFFFFFFFF))
+                 elif 'rel32' in sig:
+                     # rel32
+                     current_len = len(out) + 4
+                     offset = val - (addr + current_len)
+                     out.extend(struct.pack('<i', offset))
 
         return out
 

@@ -1,0 +1,148 @@
+format ELF64 executable
+entry start
+
+; --- Constants (ABI) ---
+sys_read    = 0
+sys_write   = 1
+sys_open    = 2
+sys_close   = 3
+sys_fstat   = 5
+sys_mmap    = 9
+sys_exit    = 60
+
+O_RDONLY    = 0
+PROT_RWX    = 7
+MAP_FLAGS   = 34
+
+; --- Code ---
+start:
+    ; Arg check
+    pop rcx
+    cmp rcx, 2
+    jl usage
+
+    pop rdi
+    pop rdi
+    mov r13, rdi ; argv[1]
+
+    ; Open
+    mov rax, sys_open
+    mov rdi, r13
+    mov rsi, O_RDONLY
+    mov rdx, 0
+    syscall
+
+    cmp rax, 0
+    jl error_open
+    mov r14, rax ; fd
+
+    ; Fstat
+    mov rax, sys_fstat
+    mov rdi, r14
+    lea rsi, [stat_buf]
+    syscall
+
+    cmp rax, 0
+    jl error_read
+
+    mov r15, [stat_buf + 48] ; filesize
+
+    ; Mmap
+    mov rax, sys_mmap
+    mov rdi, 0
+    mov rsi, r15
+    mov rdx, PROT_RWX
+    mov r10, MAP_FLAGS
+    mov r8, -1
+    mov r9, 0
+    syscall
+
+    cmp rax, -1
+    je error_mmap
+    mov r12, rax ; mem_addr (TESTING R12 WITH SIB)
+
+    ; Read
+    mov rax, sys_read
+    mov rdi, r14 ; fd
+    mov rsi, r12 ; mem_addr
+    mov rdx, r15 ; filesize
+    syscall
+
+    cmp rax, 0
+    jl error_read
+
+    ; Close
+    mov rax, sys_close
+    mov rdi, r14
+    syscall
+
+    ; Verify Magic
+    mov rax, [r12] ; This requires SIB!
+    mov rbx, 0x584F464C454F5A56
+    cmp rax, rbx
+    jne error_magic
+
+    ; Success Msg
+    mov rax, sys_write
+    mov rdi, 1
+    lea rsi, [msg_run]
+    mov rdx, 48
+    syscall
+
+    ; Payload
+    mov rax, r12
+    add rax, 16
+    call rax
+
+    ; Exit
+    mov rax, sys_exit
+    xor rdi, rdi
+    syscall
+
+usage:
+    lea rsi, [msg_usage]
+    mov rdx, 29
+    jmp print_err
+error_open:
+    lea rsi, [msg_err_open]
+    mov rdx, 28
+    jmp print_err
+error_read:
+    lea rsi, [msg_err_read]
+    mov rdx, 28
+    jmp print_err
+error_mmap:
+    lea rsi, [msg_err_mmap]
+    mov rdx, 20
+    jmp print_err
+error_magic:
+    lea rsi, [msg_err_magic]
+    mov rdx, 32
+    jmp print_err
+
+print_err:
+    mov rax, sys_write
+    mov rdi, 1
+    syscall
+    mov rax, sys_exit
+    mov rdi, 1
+    syscall
+
+; --- Data ---
+msg_usage db "Usage: ./fox-loader <file>", 10
+msg_run db "[FoxLoader] Header verified. Executing payload...", 10
+msg_err_open db "Error: Could not open file.", 10
+msg_err_read db "Error: Could not read file.", 10
+msg_err_mmap db "Error: mmap failed.", 10
+msg_err_magic db "Error: Invalid VZOELFOX header!", 10
+
+stat_buf:
+db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
+db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
+db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
+db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
+db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
+db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
+db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
+db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
+db 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0
