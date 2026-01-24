@@ -1,0 +1,166 @@
+; Morph Kontrol Alur (Control Flow)
+
+; Comparison
+cmp.r64.r64         rex=W opcode=0x39 modrm=reg,reg ; [AI_HINT: Bandingkan dua register]
+cmp.r64.imm32       rex=W opcode=0x81 modrm=7 imm32 ; [AI_HINT: Bandingkan register dengan angka 32-bit]
+cmp.r64.imm8        rex=W opcode=0x83 modrm=7 imm8  ; [AI_HINT: Bandingkan register dengan angka 8-bit]
+
+; Test (Logical Compare)
+test.r64.r64        rex=W opcode=0x85 modrm=reg,reg ; [AI_HINT: Uji bit register (AND logic)]
+
+; Unconditional Jump
+jmp.rel32           opcode=0xE9 rel32 ; [AI_HINT: Lompat tanpa syarat (lompat)]
+
+; Conditional Jumps - Equality
+je.rel32            opcode=0x0F,0x84 rel32  ; [AI_HINT: Lompat jika Sama / Nol]
+jz.rel32            opcode=0x0F,0x84 rel32  ; [AI_HINT: Alias je]
+jne.rel32           opcode=0x0F,0x85 rel32  ; [AI_HINT: Lompat jika Tidak Sama / Tidak Nol]
+jnz.rel32           opcode=0x0F,0x85 rel32  ; [AI_HINT: Alias jne]
+
+; Conditional Jumps - Signed Arithmetic
+jl.rel32            opcode=0x0F,0x8C rel32  ; [AI_HINT: Lompat jika Lebih Kecil (Signed)]
+jle.rel32           opcode=0x0F,0x8E rel32  ; [AI_HINT: Lompat jika Lebih Kecil atau Sama (Signed)]
+jg.rel32            opcode=0x0F,0x8F rel32  ; [AI_HINT: Lompat jika Lebih Besar (Signed)]
+jge.rel32           opcode=0x0F,0x8D rel32  ; [AI_HINT: Lompat jika Lebih Besar atau Sama (Signed)]
+
+; Conditional Jumps - Unsigned Arithmetic
+jb.rel32            opcode=0x0F,0x82 rel32  ; [AI_HINT: Lompat jika Di Bawah (Unsigned)]
+jae.rel32           opcode=0x0F,0x83 rel32  ; [AI_HINT: Lompat jika Di Atas atau Sama (Unsigned)]
+ja.rel32            opcode=0x0F,0x87 rel32  ; [AI_HINT: Lompat jika Di Atas (Unsigned)]
+jbe.rel32           opcode=0x0F,0x86 rel32  ; [AI_HINT: Lompat jika Di Bawah atau Sama (Unsigned)]
+
+; Conditional Jumps - Flags & Parity
+js.rel32            opcode=0x0F,0x88 rel32  ; [AI_HINT: Lompat jika Negatif (Sign flag)]
+jns.rel32           opcode=0x0F,0x89 rel32  ; [AI_HINT: Lompat jika Positif (Not Sign)]
+jo.rel32            opcode=0x0F,0x80 rel32  ; [AI_HINT: Lompat jika Overflow]
+jno.rel32           opcode=0x0F,0x81 rel32  ; [AI_HINT: Lompat jika Tidak Overflow]
+jp.rel32            opcode=0x0F,0x8A rel32  ; [AI_HINT: Lompat jika Paritas Genap (Parity Even)]
+jpe.rel32           opcode=0x0F,0x8A rel32  ; [AI_HINT: Alias jp]
+jnp.rel32           opcode=0x0F,0x8B rel32  ; [AI_HINT: Lompat jika Paritas Ganjil (Not Parity/Odd)]
+jpo.rel32           opcode=0x0F,0x8B rel32  ; [AI_HINT: Alias jnp]
+
+; Conditional Moves (CMOV)
+cmove.r64.r64       rex=W opcode=0x0F,0x44 modrm=reg,reg ; [AI_HINT: Salin register jika Sama/Nol]
+cmovz.r64.r64       rex=W opcode=0x0F,0x44 modrm=reg,reg ; [AI_HINT: Alias cmove]
+cmovne.r64.r64      rex=W opcode=0x0F,0x45 modrm=reg,reg ; [AI_HINT: Salin register jika Tidak Sama/Tidak Nol]
+cmovnz.r64.r64      rex=W opcode=0x0F,0x45 modrm=reg,reg ; [AI_HINT: Alias cmovne]
+cmovs.r64.r64       rex=W opcode=0x0F,0x48 modrm=reg,reg ; [AI_HINT: Salin register jika Negatif]
+cmovns.r64.r64      rex=W opcode=0x0F,0x49 modrm=reg,reg ; [AI_HINT: Salin register jika Positif]
+cmovl.r64.r64       rex=W opcode=0x0F,0x4C modrm=reg,reg ; [AI_HINT: Salin register jika Lebih Kecil (Signed)]
+cmovle.r64.r64      rex=W opcode=0x0F,0x4E modrm=reg,reg ; [AI_HINT: Salin register jika Lebih Kecil/Sama (Signed)]
+cmovg.r64.r64       rex=W opcode=0x0F,0x4F modrm=reg,reg ; [AI_HINT: Salin register jika Lebih Besar (Signed)]
+cmovge.r64.r64      rex=W opcode=0x0F,0x4D modrm=reg,reg ; [AI_HINT: Salin register jika Lebih Besar/Sama (Signed)]
+cmovb.r64.r64       rex=W opcode=0x0F,0x42 modrm=reg,reg ; [AI_HINT: Salin register jika Di Bawah (Unsigned)]
+cmovc.r64.r64       rex=W opcode=0x0F,0x42 modrm=reg,reg ; [AI_HINT: Alias cmovb (Carry)]
+cmovbe.r64.r64      rex=W opcode=0x0F,0x46 modrm=reg,reg ; [AI_HINT: Salin register jika Di Bawah/Sama (Unsigned)]
+cmova.r64.r64       rex=W opcode=0x0F,0x47 modrm=reg,reg ; [AI_HINT: Salin register jika Di Atas (Unsigned)]
+cmovae.r64.r64      rex=W opcode=0x0F,0x43 modrm=reg,reg ; [AI_HINT: Salin register jika Di Atas/Sama (Unsigned)]
+cmovnc.r64.r64      rex=W opcode=0x0F,0x43 modrm=reg,reg ; [AI_HINT: Alias cmovae (Not Carry)]
+cmovo.r64.r64       rex=W opcode=0x0F,0x40 modrm=reg,reg ; [AI_HINT: Salin register jika Overflow]
+cmovno.r64.r64      rex=W opcode=0x0F,0x41 modrm=reg,reg ; [AI_HINT: Salin register jika Tidak Overflow]
+cmovp.r64.r64       rex=W opcode=0x0F,0x4A modrm=reg,reg ; [AI_HINT: Salin register jika Paritas Genap]
+cmovpe.r64.r64      rex=W opcode=0x0F,0x4A modrm=reg,reg ; [AI_HINT: Alias cmovp]
+cmovnp.r64.r64      rex=W opcode=0x0F,0x4B modrm=reg,reg ; [AI_HINT: Salin register jika Paritas Ganjil]
+cmovpo.r64.r64      rex=W opcode=0x0F,0x4B modrm=reg,reg ; [AI_HINT: Alias cmovnp]
+
+; Set Byte on Condition (SETcc)
+sete.r64            opcode=0x0F,0x94 modrm=0 ; [AI_HINT: Set byte 1 jika Sama/Nol, 0 jika tidak]
+setz.r64            opcode=0x0F,0x94 modrm=0 ; [AI_HINT: Alias sete]
+setne.r64           opcode=0x0F,0x95 modrm=0 ; [AI_HINT: Set byte 1 jika Tidak Sama/Tidak Nol]
+setnz.r64           opcode=0x0F,0x95 modrm=0 ; [AI_HINT: Alias setne]
+sets.r64            opcode=0x0F,0x98 modrm=0 ; [AI_HINT: Set byte 1 jika Negatif]
+setns.r64           opcode=0x0F,0x99 modrm=0 ; [AI_HINT: Set byte 1 jika Positif]
+setl.r64            opcode=0x0F,0x9C modrm=0 ; [AI_HINT: Set byte 1 jika Lebih Kecil (Signed)]
+setle.r64           opcode=0x0F,0x9E modrm=0 ; [AI_HINT: Set byte 1 jika Lebih Kecil/Sama (Signed)]
+setg.r64            opcode=0x0F,0x9F modrm=0 ; [AI_HINT: Set byte 1 jika Lebih Besar (Signed)]
+setge.r64           opcode=0x0F,0x9D modrm=0 ; [AI_HINT: Set byte 1 jika Lebih Besar/Sama (Signed)]
+setb.r64            opcode=0x0F,0x92 modrm=0 ; [AI_HINT: Set byte 1 jika Di Bawah (Unsigned)]
+setc.r64            opcode=0x0F,0x92 modrm=0 ; [AI_HINT: Alias setb (Carry)]
+setbe.r64           opcode=0x0F,0x96 modrm=0 ; [AI_HINT: Set byte 1 jika Di Bawah/Sama (Unsigned)]
+seta.r64            opcode=0x0F,0x97 modrm=0 ; [AI_HINT: Set byte 1 jika Di Atas (Unsigned)]
+setae.r64           opcode=0x0F,0x93 modrm=0 ; [AI_HINT: Set byte 1 jika Di Atas/Sama (Unsigned)]
+setnc.r64           opcode=0x0F,0x93 modrm=0 ; [AI_HINT: Alias setae (Not Carry)]
+seto.r64            opcode=0x0F,0x90 modrm=0 ; [AI_HINT: Set byte 1 jika Overflow]
+setno.r64           opcode=0x0F,0x91 modrm=0 ; [AI_HINT: Set byte 1 jika Tidak Overflow]
+setp.r64            opcode=0x0F,0x9A modrm=0 ; [AI_HINT: Set byte 1 jika Paritas Genap]
+setpe.r64           opcode=0x0F,0x9A modrm=0 ; [AI_HINT: Alias setp]
+setnp.r64           opcode=0x0F,0x9B modrm=0 ; [AI_HINT: Set byte 1 jika Paritas Ganjil]
+setpo.r64           opcode=0x0F,0x9B modrm=0 ; [AI_HINT: Alias setnp]
+
+; Misc
+nop                 opcode=0x90 ; [AI_HINT: No Operation]
+ud2                 opcode=0x0F,0x0B ; [AI_HINT: Undefined Instruction (Crash)]
+int3                opcode=0xCC ; [AI_HINT: Breakpoint / Hard Divider]
+
+; Subroutine
+call.rel32          opcode=0xE8 rel32 ; [AI_HINT: Panggil fungsi]
+call.r64            rex=W opcode=0xFF modrm=2 ; [AI_HINT: Panggil fungsi dari register]
+ret                 opcode=0xC3       ; [AI_HINT: Kembali dari fungsi (kembali)]
+kembali             opcode=0xC3       ; [AI_HINT: Alias ret]
+
+; --- Morph Structure Definitions (High-Level) ---
+; [AI_HINT: Definisi struktur kontrol alur bahasa .fox]
+; Format: mnemonic kind=struct type=<type> scope=<scope> [jump_condition=<cond>] [action=<action>]
+
+; Fungsi
+fungsi              kind=struct type=scope_start scope=FUNGSI action=def_label
+tutup_fungsi        kind=struct type=scope_end scope=FUNGSI action=ret
+
+; Kondisional (Jika) - Inverse Logic for Jump
+; Note: Jump logic is INVERSE of the condition name because we jump OVER the block if FALSE.
+jika_sama           kind=struct type=scope_start scope=IF jump_condition=jne
+jika_beda           kind=struct type=scope_start scope=IF jump_condition=je
+jika_bukan_nol      kind=struct type=scope_start scope=IF jump_condition=je
+jika_lebih          kind=struct type=scope_start scope=IF jump_condition=jle
+jika_kurang         kind=struct type=scope_start scope=IF jump_condition=jge
+jika_lebih_sama     kind=struct type=scope_start scope=IF jump_condition=jl
+jika_kurang_sama    kind=struct type=scope_start scope=IF jump_condition=jg
+jika_positif        kind=struct type=scope_start scope=IF jump_condition=js
+jika_negatif        kind=struct type=scope_start scope=IF jump_condition=jns
+jika_nol            kind=struct type=scope_start scope=IF jump_condition=jne
+
+; Unsigned Comparision Structures
+jika_diatas         kind=struct type=scope_start scope=IF jump_condition=jbe
+jika_dibawah        kind=struct type=scope_start scope=IF jump_condition=jae
+jika_diatas_sama    kind=struct type=scope_start scope=IF jump_condition=jb
+jika_dibawah_sama   kind=struct type=scope_start scope=IF jump_condition=ja
+
+; Flag Structures
+jika_overflow       kind=struct type=scope_start scope=IF jump_condition=jno
+jika_tidak_overflow kind=struct type=scope_start scope=IF jump_condition=jo
+jika_genap          kind=struct type=scope_start scope=IF jump_condition=jnp
+jika_ganjil         kind=struct type=scope_start scope=IF jump_condition=jp
+
+lainnya             kind=struct type=mid_scope scope=IF action=else
+tutup_jika          kind=struct type=scope_end scope=IF action=close_label
+
+; Perulangan (Loop)
+loop                kind=struct type=scope_start scope=LOOP action=label_start
+tutup_loop          kind=struct type=scope_end scope=LOOP action=jump_start
+
+; Perulangan (Selama/While) - Note: Logic is similar to LOOP in structure, condition check must be explicit before?
+; Actually 'selama' usually implies a condition check at start. But in current parser, 'selama' is just a label start.
+selama              kind=struct type=scope_start scope=SELAMA action=label_start
+tutup_selama        kind=struct type=scope_end scope=SELAMA action=jump_start
+
+; Conditional While Loops (Selama) - Inverse Logic
+selama_sama           kind=struct type=scope_start scope=SELAMA jump_condition=jne
+selama_beda           kind=struct type=scope_start scope=SELAMA jump_condition=je
+selama_bukan_nol      kind=struct type=scope_start scope=SELAMA jump_condition=je
+selama_lebih          kind=struct type=scope_start scope=SELAMA jump_condition=jle
+selama_kurang         kind=struct type=scope_start scope=SELAMA jump_condition=jge
+selama_lebih_sama     kind=struct type=scope_start scope=SELAMA jump_condition=jl
+selama_kurang_sama    kind=struct type=scope_start scope=SELAMA jump_condition=jg
+selama_positif        kind=struct type=scope_start scope=SELAMA jump_condition=js
+selama_negatif        kind=struct type=scope_start scope=SELAMA jump_condition=jns
+selama_nol            kind=struct type=scope_start scope=SELAMA jump_condition=jne
+
+selama_diatas         kind=struct type=scope_start scope=SELAMA jump_condition=jbe
+selama_dibawah        kind=struct type=scope_start scope=SELAMA jump_condition=jae
+selama_diatas_sama    kind=struct type=scope_start scope=SELAMA jump_condition=jb
+selama_dibawah_sama   kind=struct type=scope_start scope=SELAMA jump_condition=ja
+
+; Kontrol Alur
+henti               kind=struct type=flow_control action=break
+lanjut              kind=struct type=flow_control action=continue
+lompat              kind=struct type=flow_control action=jump_explicit
