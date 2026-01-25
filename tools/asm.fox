@@ -748,24 +748,24 @@ usage:
 error_open:
     mov rax, sys_write
     mov rdi, 1
-    lea rsi, [msg_err]
-    mov rdx, 16
+    lea rsi, [msg_err_open]
+    mov rdx, 19
     syscall
     jmp exit
 
 error_mmap:
     mov rax, sys_write
     mov rdi, 1
-    lea rsi, [msg_err]
-    mov rdx, 16
+    lea rsi, [msg_err_mmap]
+    mov rdx, 19
     syscall
     jmp exit
 
 error_create:
     mov rax, sys_write
     mov rdi, 1
-    lea rsi, [msg_err]
-    mov rdx, 16
+    lea rsi, [msg_err_create]
+    mov rdx, 21
     syscall
     jmp exit
 
@@ -1101,7 +1101,7 @@ get_token:
     je .skip_comment
 
     ; Found start of token
-    jmp .read_token_char
+    jmp .check_token_start
 
 .skip_comment:
     mov rsi, [source_ptr]
@@ -1114,6 +1114,20 @@ get_token:
     cmp al, 10 ; newline ends comment
     je .skip_whitespace
     jmp .skip_comment
+
+    ; Check for string start
+    cmp al, '"'
+    je .read_string_double
+    cmp al, "'"
+    je .read_string_single
+
+.check_token_start:
+    ; Check for string start
+    cmp al, '"'
+    je .read_string_double
+    cmp al, "'"
+    je .read_string_single
+    jmp .read_token_char
 
 .read_token_loop:
     mov rsi, [source_ptr]
@@ -1143,6 +1157,54 @@ get_token:
     cmp rcx, 255
     jge .token_done ; safety
     jmp .read_token_loop
+
+.read_string_double:
+    ; Consume initial quote
+    inc qword [source_ptr]
+    mov byte [rdi + rcx], '"'
+    inc rcx
+
+.read_string_double_loop:
+    mov rsi, [source_ptr]
+    cmp rsi, [source_end]
+    jae .token_done
+
+    mov al, [rsi]
+    inc qword [source_ptr]
+
+    mov [rdi + rcx], al
+    inc rcx
+
+    cmp al, '"'
+    je .token_done
+
+    cmp rcx, 255
+    jge .token_done
+    jmp .read_string_double_loop
+
+.read_string_single:
+    ; Consume initial quote
+    inc qword [source_ptr]
+    mov byte [rdi + rcx], "'"
+    inc rcx
+
+.read_string_single_loop:
+    mov rsi, [source_ptr]
+    cmp rsi, [source_end]
+    jae .token_done
+
+    mov al, [rsi]
+    inc qword [source_ptr]
+
+    mov [rdi + rcx], al
+    inc rcx
+
+    cmp al, "'"
+    je .token_done
+
+    cmp rcx, 255
+    jge .token_done
+    jmp .read_string_single_loop
 
 .token_done_rewind:
     ; We hit a char that shouldn't be consumed (like ';')
@@ -1597,8 +1659,15 @@ source_end dq 0
 output_ptr dq 0
 output_fd dq 0
 
+msg_d1 db "1", 10, 0
+msg_d2 db "2", 10, 0
+msg_d3 db "3", 10, 0
+msg_d4 db "4", 10, 0
 msg_usage db "Usage: asm.fox <in>", 10, 0
 msg_err db "Error detected.", 10, 0
+msg_err_open db "Error: Cannot Open.", 10, 0
+msg_err_mmap db "Error: Cannot Mmap.", 10, 0
+msg_err_create db "Error: Cannot Create.", 10, 0
 msg_unknown db "Error: Unknown token: ", 0
 msg_err_sym_overflow db "Error: Symbol Table Full.", 10, 0
 msg_err_out_overflow db "Error: Output Buffer Full.", 10, 0
