@@ -248,6 +248,10 @@ class MorphAssembler:
                 # Simple check: is parts[0] a known mnemonic?
                 known_mnemonics = set(self.instructions.keys())
                 known_mnemonics.add('db')
+                known_mnemonics.add('dw')
+                known_mnemonics.add('dd')
+                known_mnemonics.add('dq')
+                known_mnemonics.add('rb')
                 known_mnemonics.add('use64')
 
                 if mnemonic not in known_mnemonics and (potential_mnemonic in known_mnemonics or '=' in line):
@@ -264,38 +268,63 @@ class MorphAssembler:
             operands_str = parts[1] if len(parts) > 1 else ""
 
             # Handle DB
-            if mnemonic == 'db':
+            if mnemonic in ['db', 'dw', 'dd', 'dq']:
                 # Parse comma separated values
-                values = []
                 # Simple parser for strings and ints
-                # Note: this is a weak parser, assumes quotes don't contain commas
                 raw_parts = operands_str.split(',')
-                size = 0
                 data_bytes = bytearray()
+
+                width = {'db': 1, 'dw': 2, 'dd': 4, 'dq': 8}[mnemonic]
+                pack_fmt = {'db': 'B', 'dw': '<H', 'dd': '<I', 'dq': '<Q'}[mnemonic]
 
                 for p in raw_parts:
                     p = p.strip()
                     if p.startswith("'") or p.startswith('"'):
                          s = p[1:-1]
                          b = s.encode('utf-8') # ASCII
-                         data_bytes.extend(b)
+                         # For db, just extend. For others? Treat as int?
+                         # Usually only db supports strings.
+                         if mnemonic == 'db':
+                             data_bytes.extend(b)
+                         else:
+                             # Maybe packed chars? 'AB' -> 0x4241
+                             pass
                     else:
                         try:
                             val = int(p, 0)
-                            data_bytes.append(val)
+                            # Truncate to width
+                            if width == 1: data_bytes.append(val & 0xFF)
+                            else: data_bytes.extend(struct.pack(pack_fmt, val & ((1<<(width*8))-1)))
                         except:
-                            print(f"Warning: could not parse db value {p}")
+                            print(f"Warning: could not parse {mnemonic} value {p}")
 
-                size = len(data_bytes)
                 parsed_instructions.append({
                     'type': 'data',
                     'bytes': data_bytes,
                     'addr': current_addr
                 })
-                current_addr += size
+                current_addr += len(data_bytes)
                 continue
 
             if mnemonic == 'use64': continue # Ignore
+
+            if mnemonic == 'rb':
+                # Handle Reserve Bytes by emitting zeros (Flat binary approach)
+                count_str = operands_str.strip()
+                count = 0
+                try:
+                    count = int(count_str, 0)
+                except:
+                    print(f"Warning: could not parse rb count {count_str}")
+
+                if count > 0:
+                    parsed_instructions.append({
+                        'type': 'data',
+                        'bytes': bytearray(count),
+                        'addr': current_addr
+                    })
+                    current_addr += count
+                continue
 
             # Parse Operands
             operands = []
