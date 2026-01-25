@@ -50,7 +50,9 @@ def parse_vzoel():
                     'rex': '',
                     'opcode': [],
                     'modrm': '',
-                    'reg_in_op': False
+                    'reg_in_op': False,
+                    'imm8': False,
+                    'imm32': False
                 }
 
                 for p in parts[1:]:
@@ -64,6 +66,10 @@ def parse_vzoel():
                             props['rex'] = v
                     elif p == 'reg_in_op':
                         props['reg_in_op'] = True
+                    elif p == 'imm8':
+                        props['imm8'] = True
+                    elif p == 'imm32':
+                        props['imm32'] = True
 
                 instructions.append({
                     'mnemonic': mnemonic,
@@ -152,8 +158,10 @@ def write_asm(keys, values, instructions):
             flags = 0
             if p['rex'] == 'W': flags |= 1
             if p['reg_in_op']: flags |= 2
+            if p['imm8']: flags |= 4
+            if p['imm32']: flags |= 8
 
-            f.write(f"    db {flags} ; Flags (1=REX.W, 2=RegInOp)\n")
+            f.write(f"    db {flags} ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)\n")
 
             # Opcode
             op_len = len(p['opcode'])
@@ -164,14 +172,15 @@ def write_asm(keys, values, instructions):
 
             # ModRM Info
             # 0: None, 1: rm,reg, 2: reg,rm, 3: reg,mem, 4: mem,reg
+            # 0x10..0x17: Extension 0..7 (rm field with opcode extension in reg)
             modrm_code = 0
             m = p['modrm']
             if m == 'rm,reg': modrm_code = 1
             elif m == 'reg,rm': modrm_code = 2
             elif m == 'reg,mem': modrm_code = 3
             elif m == 'mem,reg': modrm_code = 4
-            # Simplified for now. '0' '7' etc handled as raw?
-            # Let's just store specific codes for register-register mov first.
+            elif m.isdigit() and 0 <= int(m) <= 7:
+                 modrm_code = 0x10 + int(m)
 
             f.write(f"    db {modrm_code} ; ModRM Type (1=rm,reg)\n")
 
