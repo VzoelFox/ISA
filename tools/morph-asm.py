@@ -248,6 +248,7 @@ class MorphAssembler:
                 # Simple check: is parts[0] a known mnemonic?
                 known_mnemonics = set(self.instructions.keys())
                 known_mnemonics.add('db')
+                known_mnemonics.add('rb')
                 known_mnemonics.add('use64')
 
                 if mnemonic not in known_mnemonics and (potential_mnemonic in known_mnemonics or '=' in line):
@@ -296,6 +297,24 @@ class MorphAssembler:
                 continue
 
             if mnemonic == 'use64': continue # Ignore
+
+            if mnemonic == 'rb':
+                # Handle Reserve Bytes by emitting zeros (Flat binary approach)
+                count_str = operands_str.strip()
+                count = 0
+                try:
+                    count = int(count_str, 0)
+                except:
+                    print(f"Warning: could not parse rb count {count_str}")
+
+                if count > 0:
+                    parsed_instructions.append({
+                        'type': 'data',
+                        'bytes': bytearray(count),
+                        'addr': current_addr
+                    })
+                    current_addr += count
+                continue
 
             # Parse Operands
             operands = []

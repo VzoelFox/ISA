@@ -410,6 +410,7 @@ start:
     cmp qword [pass_count], 2
     jne .skip_write_rex
 
+    call check_buffer_overflow
     mov rax, r13
     mov rcx, [output_ptr]
     mov [rcx], al
@@ -431,6 +432,7 @@ start:
     cmp qword [pass_count], 2
     jne .skip_write_op_delayed
 
+    call check_buffer_overflow
     mov al, [rdi + rdx]
     mov r8, [output_ptr]
     mov [r8], al
@@ -448,6 +450,7 @@ start:
     cmp qword [pass_count], 2
     jne .skip_write_modrm
 
+    call check_buffer_overflow
     mov rbx, [output_ptr]
     mov [rbx], al
     inc qword [output_ptr]
@@ -462,6 +465,7 @@ start:
     cmp qword [pass_count], 2
     jne .skip_write_sib
 
+    call check_buffer_overflow
     mov rax, r14
     mov rbx, [output_ptr]
     mov [rbx], al
@@ -484,6 +488,7 @@ start:
     cmp qword [pass_count], 2
     jne .skip_write_disp32
 
+    call check_buffer_overflow
     mov rax, [displacement_val]
     mov rbx, [output_ptr]
     mov [rbx], eax
@@ -497,6 +502,7 @@ start:
     cmp qword [pass_count], 2
     jne .skip_write_disp8
 
+    call check_buffer_overflow
     mov rax, [displacement_val]
     mov rbx, [output_ptr]
     mov [rbx], al
@@ -535,6 +541,7 @@ start:
     cmp qword [pass_count], 2
     jne .skip_write_imm8
 
+    call check_buffer_overflow
     mov rbx, [output_ptr]
     mov [rbx], al ; Store byte
     inc qword [output_ptr]
@@ -604,6 +611,7 @@ start:
     cmp qword [pass_count], 2
     jne .skip_write_imm32
 
+    call check_buffer_overflow
     mov rbx, [output_ptr]
     mov [rbx], eax ; Store 4 bytes
     add qword [output_ptr], 4
@@ -768,10 +776,33 @@ exit:
 
 ; --- ROUTINES ---
 
+check_buffer_overflow:
+    ; Check if output_ptr >= output_buffer + 1048576 - 8 (Safety margin for multibyte writes)
+    push rax
+    push rbx
+    mov rax, [output_ptr]
+    lea rbx, [output_buffer]
+    add rbx, 1048568
+    cmp rax, rbx
+    jae .overflow
+    pop rbx
+    pop rax
+    ret
+.overflow:
+    mov rax, sys_write
+    mov rdi, 1
+    lea rsi, [msg_err_out_overflow]
+    mov rdx, 27
+    syscall
+    jmp exit
+
 add_symbol:
     ; Input: rax (hash), rbx (offset)
     ; Output: None
     mov rcx, [symbol_count]
+    cmp rcx, 1024
+    jge .symbol_overflow
+
     mov rdx, rcx
     shl rdx, 4 ; * 16 (8 byte hash + 8 byte offset)
     lea rdi, [symbol_table + rdx]
@@ -779,6 +810,14 @@ add_symbol:
     mov [rdi + 8], rbx
     inc qword [symbol_count]
     ret
+
+.symbol_overflow:
+    mov rax, sys_write
+    mov rdi, 1
+    lea rsi, [msg_err_sym_overflow]
+    mov rdx, 26
+    syscall
+    jmp exit
 
 find_symbol:
     ; Input: rax (hash)
@@ -893,6 +932,26 @@ try_parse_directive:
     cmp qword [pass_count], 2
     jne .skip_write_rb
 
+    push rax
+    push rbx
+    mov rbx, [output_ptr]
+    add rbx, rax
+    lea rax, [output_buffer]
+    add rax, 1048576
+    cmp rbx, rax
+    jae .rb_overflow
+    pop rbx
+    pop rax
+    jmp .rb_ok
+.rb_overflow:
+    mov rax, sys_write
+    mov rdi, 1
+    lea rsi, [msg_err_out_overflow]
+    mov rdx, 27
+    syscall
+    jmp exit
+.rb_ok:
+
     mov rcx, rax
     mov rdi, [output_ptr]
     xor al, al
@@ -919,6 +978,7 @@ try_parse_directive:
     cmp qword [pass_count], 2
     jne .skip_write_db_int
 
+    call check_buffer_overflow
     mov rbx, [output_ptr]
     mov [rbx], al
     inc qword [output_ptr]
@@ -942,6 +1002,26 @@ try_parse_directive:
 
     cmp qword [pass_count], 2
     jne .skip_write_db_str
+
+    push rax
+    push rbx
+    mov rbx, [output_ptr]
+    add rbx, rcx
+    lea rax, [output_buffer]
+    add rax, 1048576
+    cmp rbx, rax
+    jae .db_str_overflow
+    pop rbx
+    pop rax
+    jmp .db_str_ok
+.db_str_overflow:
+    mov rax, sys_write
+    mov rdi, 1
+    lea rsi, [msg_err_out_overflow]
+    mov rdx, 27
+    syscall
+    jmp exit
+.db_str_ok:
 
     lea rsi, [token_buffer + 1] ; Skip first quote
     mov rdi, [output_ptr]
@@ -1307,25 +1387,110 @@ parse_int:
 
 parse_int_rsi:
     ; Input: rsi (string ptr)
-    ; Output: rax
+    ; Output: rax = integer value
     xor rax, rax
     xor rcx, rcx
+    xor r8, r8   ; Sign (0=+, 1=-)
+    mov r9, 10   ; Base
+
+    ; Check Sign
+    cmp byte [rsi], '-'
+    jne .check_hex
+    mov r8, 1
+    inc rsi
+
+.check_hex:
+    cmp byte [rsi], '0'
+    jne .parse_int_loop
+    mov r10b, [rsi+1]
+    cmp r10b, 'x'
+    je .is_hex
+    cmp r10b, 'X'
+    je .is_hex
+    jmp .parse_int_loop
+
+.is_hex:
+    mov r9, 16
+    add rsi, 2
+    xor rax, rax
 
 .parse_int_loop:
     mov cl, [rsi]
     cmp cl, 0
     je .parse_int_done
 
+    ; Convert char to val
+    cmp cl, '0'
+    jb .invalid_digit
+    cmp cl, '9'
+    jbe .digit_09
+
+    cmp cl, 'A'
+    jb .invalid_digit
+    cmp cl, 'F'
+    jbe .digit_AF
+
+    cmp cl, 'a'
+    jb .invalid_digit
+    cmp cl, 'f'
+    jbe .digit_af
+
+    jmp .invalid_digit
+
+.digit_09:
     sub cl, '0'
-    ; TODO: Check if valid digit
-    imul rax, 10
-    add rax, rcx
+    jmp .check_base
+
+.digit_AF:
+    sub cl, 'A'
+    add cl, 10
+    jmp .check_base
+
+.digit_af:
+    sub cl, 'a'
+    add cl, 10
+    jmp .check_base
+
+.check_base:
+    movzx rdx, cl
+    cmp rdx, r9
+    jae .invalid_digit
+
+    imul rax, r9
+    add rax, rdx
 
     inc rsi
     jmp .parse_int_loop
 
 .parse_int_done:
+    cmp r8, 1
+    jne .ret
+    neg rax
+.ret:
     ret
+
+.invalid_digit:
+    mov rax, sys_write
+    mov rdi, 1
+    lea rsi, [msg_err]
+    mov rdx, 16
+    syscall
+
+    lea rsi, [token_buffer]
+    mov rdi, rsi
+    call strlen
+    mov rdx, rax
+    mov rax, sys_write
+    mov rdi, 1
+    syscall
+
+    mov rax, sys_write
+    mov rdi, 1
+    lea rsi, [newline]
+    mov rdx, 1
+    syscall
+
+    jmp exit
 
 strcmp:
     ; Input: rdi (str1), rsi (str2)
@@ -1435,6 +1600,8 @@ output_fd dq 0
 msg_usage db "Usage: asm.fox <in>", 10, 0
 msg_err db "Error detected.", 10, 0
 msg_unknown db "Error: Unknown token: ", 0
+msg_err_sym_overflow db "Error: Symbol Table Full.", 10, 0
+msg_err_out_overflow db "Error: Output Buffer Full.", 10, 0
 msg_done db "Done. out.morph", 10, 0
 char_buf db 0
 newline db 10, 0
