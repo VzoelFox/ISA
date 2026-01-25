@@ -771,7 +771,7 @@ error_create:
 
 exit:
     mov rax, sys_exit
-    mov rdi, 1
+    xor rdi, rdi ; Correct exit code 0
     syscall
 
 ; --- ROUTINES ---

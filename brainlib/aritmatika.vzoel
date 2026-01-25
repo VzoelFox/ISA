@@ -9,6 +9,12 @@ add.mem.imm8        rex=W opcode=0x83 modrm=0 imm8  ; [AI_HINT: Tambah memori de
 add.r64.imm32       rex=W opcode=0x81 modrm=0 imm32 ; [AI_HINT: Tambah register dengan angka 32-bit (+)]
 add.mem.imm32       rex=W opcode=0x81 modrm=0 imm32 ; [AI_HINT: Tambah memori dengan angka 32-bit (+)]
 
+add.r8.r8           opcode=0x00 modrm=rm,reg        ; [AI_HINT: Tambah register 8-bit dengan register 8-bit (+)]
+add.r8.mem          opcode=0x02 modrm=reg,mem       ; [AI_HINT: Tambah register 8-bit dengan memori (+)]
+add.mem.r8          opcode=0x00 modrm=mem,reg       ; [AI_HINT: Tambah memori dengan register 8-bit (+)]
+add.r8.imm8         opcode=0x80 modrm=0 imm8        ; [AI_HINT: Tambah register 8-bit dengan angka 8-bit (+)]
+add.mem.imm8        opcode=0x80 modrm=0 imm8        ; [AI_HINT: Tambah memori dengan angka 8-bit (+)]
+
 ; Add with Carry (ZFC Support)
 adc.r64.r64         rex=W opcode=0x11 modrm=rm,reg  ; [AI_HINT: Tambah dengan Carry (+ + C)]
 adc.r64.mem         rex=W opcode=0x13 modrm=reg,mem ; [AI_HINT: Tambah dengan Carry register dengan memori]
@@ -17,6 +23,9 @@ adc.r64.imm8        rex=W opcode=0x83 modrm=2 imm8  ; [AI_HINT: Tambah dengan Ca
 adc.mem.imm8        rex=W opcode=0x83 modrm=2 imm8  ; [AI_HINT: Tambah dengan Carry memori immediate 8-bit]
 adc.r64.imm32       rex=W opcode=0x81 modrm=2 imm32 ; [AI_HINT: Tambah dengan Carry immediate 32-bit]
 adc.mem.imm32       rex=W opcode=0x81 modrm=2 imm32 ; [AI_HINT: Tambah dengan Carry memori immediate 32-bit]
+
+adc.r8.r8           opcode=0x10 modrm=rm,reg        ; [AI_HINT: Tambah dengan Carry 8-bit]
+adc.r8.imm8         opcode=0x80 modrm=2 imm8        ; [AI_HINT: Tambah dengan Carry 8-bit immediate]
 
 ; Subtraction
 sub.r64.r64         rex=W opcode=0x29 modrm=rm,reg  ; [AI_HINT: Kurang register dengan register (-)]
@@ -27,6 +36,10 @@ sub.mem.imm8        rex=W opcode=0x83 modrm=5 imm8  ; [AI_HINT: Kurang memori de
 sub.r64.imm32       rex=W opcode=0x81 modrm=5 imm32 ; [AI_HINT: Kurang register dengan angka 32-bit (-)]
 sub.mem.imm32       rex=W opcode=0x81 modrm=5 imm32 ; [AI_HINT: Kurang memori dengan angka 32-bit (-)]
 
+sub.r8.r8           opcode=0x28 modrm=rm,reg        ; [AI_HINT: Kurang register 8-bit (-)]
+sub.r8.imm8         opcode=0x80 modrm=5 imm8        ; [AI_HINT: Kurang register 8-bit dengan angka 8-bit (-)]
+sub.mem.imm8        opcode=0x80 modrm=5 imm8        ; [AI_HINT: Kurang memori dengan angka 8-bit (-)]
+
 ; Subtract with Borrow (ZFC Support)
 sbb.r64.r64         rex=W opcode=0x19 modrm=rm,reg  ; [AI_HINT: Kurang dengan Borrow (- - C)]
 sbb.r64.mem         rex=W opcode=0x1B modrm=reg,mem ; [AI_HINT: Kurang dengan Borrow register dengan memori]
@@ -36,6 +49,9 @@ sbb.mem.imm8        rex=W opcode=0x83 modrm=3 imm8  ; [AI_HINT: Kurang dengan Bo
 sbb.r64.imm32       rex=W opcode=0x81 modrm=3 imm32 ; [AI_HINT: Kurang dengan Borrow immediate 32-bit]
 sbb.mem.imm32       rex=W opcode=0x81 modrm=3 imm32 ; [AI_HINT: Kurang dengan Borrow memori immediate 32-bit]
 
+sbb.r8.r8           opcode=0x18 modrm=rm,reg        ; [AI_HINT: Kurang dengan Borrow 8-bit]
+sbb.r8.imm8         opcode=0x80 modrm=3 imm8        ; [AI_HINT: Kurang dengan Borrow 8-bit immediate]
+
 ; Multiplication (Signed)
 imul.r64.r64        rex=W opcode=0x0F,0xAF modrm=reg,rm ; [AI_HINT: Kali (signed) register dengan register (*)]
 imul.r64.mem        rex=W opcode=0x0F,0xAF modrm=reg,mem ; [AI_HINT: Kali (signed) register dengan memori (*)]
@@ -44,12 +60,15 @@ imul.r64.imm32      rex=W opcode=0x69 modrm=reg,rm imm32 ; [AI_HINT: Kali (signe
 
 ; Multiplication (Unsigned)
 mul.r64             rex=W opcode=0xF7 modrm=4 ; [AI_HINT: Kali (unsigned) RAX dengan register (RAX * r64 -> RDX:RAX)]
+mul.r8              opcode=0xF6 modrm=4       ; [AI_HINT: Kali (unsigned) AL dengan register 8-bit (AL * r8 -> AX)]
 
 ; Division (Signed)
 idiv.r64            rex=W opcode=0xF7 modrm=7 ; [AI_HINT: Bagi (signed) RDX:RAX dengan register (/ %)]
+idiv.r8             opcode=0xF6 modrm=7       ; [AI_HINT: Bagi (signed) AX dengan register 8-bit]
 
 ; Division (Unsigned)
 div.r64             rex=W opcode=0xF7 modrm=6 ; [AI_HINT: Bagi (unsigned) RDX:RAX dengan register (/ %)]
+div.r8              opcode=0xF6 modrm=6       ; [AI_HINT: Bagi (unsigned) AX dengan register 8-bit]
 
 ; Sign Extension (ZFC Support)
 cqo                 rex=W opcode=0x99 ; [AI_HINT: Sign Extend RAX ke RDX:RAX (persiapan idiv)]
@@ -57,14 +76,17 @@ cqo                 rex=W opcode=0x99 ; [AI_HINT: Sign Extend RAX ke RDX:RAX (pe
 ; Increment
 inc.r64             rex=W opcode=0xFF modrm=0 ; [AI_HINT: Tambah 1 ke register (++)]
 inc.mem64           rex=W opcode=0xFF modrm=0 ; [AI_HINT: Tambah 1 ke memori (++)]
+inc.r8              opcode=0xFE modrm=0       ; [AI_HINT: Tambah 1 ke register 8-bit (++)]
 
 ; Decrement
 dec.r64             rex=W opcode=0xFF modrm=1 ; [AI_HINT: Kurang 1 dari register (--)]
 dec.mem64           rex=W opcode=0xFF modrm=1 ; [AI_HINT: Kurang 1 dari memori (--)]
+dec.r8              opcode=0xFE modrm=1       ; [AI_HINT: Kurang 1 dari register 8-bit (--)]
 
 ; Negate (Two's Complement)
 neg.r64             rex=W opcode=0xF7 modrm=3 ; [AI_HINT: Negasikan nilai register ( -x )]
 neg.mem64           rex=W opcode=0xF7 modrm=3 ; [AI_HINT: Negasikan nilai memori ( -x )]
+neg.r8              opcode=0xF6 modrm=3       ; [AI_HINT: Negasikan nilai register 8-bit]
 
 ; Trigonometry & Floating Point (x87 FPU) - Implicit st(0)
 finit               opcode=0x9B,0xDB,0xE3 ; [AI_HINT: Inisialisasi FPU]

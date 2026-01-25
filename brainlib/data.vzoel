@@ -2,16 +2,25 @@
 
 ; Move Register-Register
 mov.r64.r64         rex=W opcode=0x89 modrm=rm,reg  ; [AI_HINT: Salin nilai register ke register]
+mov.r8.r8           opcode=0x88 modrm=rm,reg        ; [AI_HINT: Salin nilai register 8-bit ke register 8-bit]
 
 ; Move Immediate
 mov.r64.imm32       rex=W opcode=0xC7 modrm=0 imm32   ; [AI_HINT: Salin angka 32-bit ke register]
 mov.r64.imm64       rex=W opcode=0xB8 reg_in_op imm64 ; [AI_HINT: Salin angka 64-bit ke register]
+mov.r8.imm8         opcode=0xB0 reg_in_op imm8        ; [AI_HINT: Salin angka 8-bit ke register 8-bit]
 
 ; Move Memory
 mov.r64.mem         rex=W opcode=0x8B modrm=reg,mem   ; [AI_HINT: Baca dari memori ke register]
 mov.mem.r64         rex=W opcode=0x89 modrm=mem,reg   ; [AI_HINT: Tulis register ke memori]
 mov.mem.imm32       rex=W opcode=0xC7 modrm=0 imm32   ; [AI_HINT: Tulis angka 32-bit ke memori]
 movb.mem.r64        opcode=0x88 modrm=mem,reg         ; [AI_HINT: Tulis byte (low 8-bit) register ke memori]
+
+mov.r8.mem          opcode=0x8A modrm=reg,mem         ; [AI_HINT: Baca dari memori ke register 8-bit]
+mov.mem.r8          opcode=0x88 modrm=mem,reg         ; [AI_HINT: Tulis register 8-bit ke memori]
+mov.mem.imm8        opcode=0xC6 modrm=0 imm8          ; [AI_HINT: Tulis immediate 8-bit ke memori]
+
+mov.mem.r32         opcode=0x89 modrm=mem,reg       ; [AI_HINT: Tulis register 32-bit ke memori]
+mov.r32.mem         opcode=0x8B modrm=reg,mem       ; [AI_HINT: Baca dari memori ke register 32-bit]
 
 ; Move with Extension (Penting untuk konversi tipe data)
 ; Zero Extend (Unsigned)
