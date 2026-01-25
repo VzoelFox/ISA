@@ -257,15 +257,38 @@ start:
 
     ; ModRM Mod Field
     ; If Memory (r11=1), Mod=00 (Direct). Else Mod=11 (Register)
-    ; Note: Mod=00 only valid if RM!=5 (RBP/r13) and RM!=4 (RSP/r12).
-    ; For simplicity, we assume Mod=00 for now.
-    ; TODO: Handle disp/SIB.
 
     cmp r11, 1
-    je .mod_mem_2
-    or rbx, 0xC0 ; Mod=11
-.mod_mem_2:
+    jne .mod_reg_2
 
+    ; Memory Mode (Mod=00)
+    ; Check for SIB requirement (RM=4/RSP or RM=12/R12)
+    mov rcx, r9
+    and rcx, 7
+    cmp rcx, 4 ; RSP/R12 maps to 4 in ModRM.rm
+    jne .no_sib_2
+
+    ; SIB Required
+    ; We set RM=4 in ModRM (which signals SIB follows)
+    ; Then we write SIB byte.
+    ; SIB: ss ii bbb
+    ; For [rsp], scale=0, index=4 (none), base=4 (rsp). -> 24h
+    ; For [r12], scale=0, index=4 (none), base=4 (r12). -> 24h
+    ; Wait, r12 is base=12? No, base is 3 bits. r12&7 = 4.
+
+    ; For now, simplistic SIB for [rsp] or [r12]
+    ; SIB byte = 0x24 (Scale=0, Index=4/None, Base=4/RSP)
+    ; Save SIB byte to write later?
+    ; We need a place to store SIB. Let's use r14.
+    mov r14, 0x24
+    or r13, 0x100 ; Flag bit 8 of r13 (REX/Flags) to indicate SIB present
+
+.no_sib_2:
+    or rbx, rcx ; OR RM
+    jmp .write_modrm
+
+.mod_reg_2:
+    or rbx, 0xC0 ; Mod=11
     mov rcx, r9
     and rcx, 7
     or rbx, rcx ; OR RM
@@ -292,10 +315,24 @@ start:
 
     ; Mod Field
     cmp r10, 1
-    je .mod_mem_1
-    or rbx, 0xC0 ; Mod=11
-.mod_mem_1:
+    jne .mod_reg_1
 
+    ; Memory Mode (Mod=00)
+    mov rcx, r8
+    and rcx, 7
+    cmp rcx, 4 ; RSP/R12
+    jne .no_sib_1
+
+    ; SIB Required for [rsp]
+    mov r14, 0x24
+    or r13, 0x100 ; SIB flag
+
+.no_sib_1:
+    or rbx, rcx ; OR RM
+    jmp .write_modrm
+
+.mod_reg_1:
+    or rbx, 0xC0 ; Mod=11
     mov rcx, r8
     and rcx, 7
     or rbx, rcx ; OR RM
@@ -324,10 +361,25 @@ start:
     shl rbx, 3
 
     cmp r10, 1
-    je .mod_mem_ext
-    or rbx, 0xC0 ; Mod=11
-.mod_mem_ext:
+    jne .mod_reg_ext
 
+    ; Memory Mode (Mod=00)
+    ; Check for SIB requirement (RM=4/RSP or RM=12/R12)
+    mov rcx, r8
+    and rcx, 7
+    cmp rcx, 4
+    jne .no_sib_ext
+
+    ; SIB Required
+    mov r14, 0x24
+    or r13, 0x100
+
+.no_sib_ext:
+    or rbx, rcx
+    jmp .write_modrm
+
+.mod_reg_ext:
+    or rbx, 0xC0 ; Mod=11
     mov rcx, r8
     and rcx, 7
     or rbx, rcx
@@ -384,6 +436,23 @@ start:
 
 .skip_write_modrm:
     inc qword [current_offset]
+
+    ; 4. Write SIB (if r13 bit 8 is set)
+    test r13, 0x100
+    jz .no_sib_byte
+
+    cmp qword [pass_count], 2
+    jne .skip_write_sib
+
+    mov rax, r14
+    mov rbx, [output_ptr]
+    mov [rbx], al
+    inc qword [output_ptr]
+
+.skip_write_sib:
+    inc qword [current_offset]
+
+.no_sib_byte:
 
 .check_immediates:
     ; Check r12 (Flags)
@@ -1024,8 +1093,12 @@ parse_register:
     cmp al, 's' ; rsi, rsp
     je .reg_s_check
 
-    ; r8-r15 handling (simplified, maybe handled later)
-    jmp .unknown_reg
+    ; Check digit for r8-r15
+    cmp al, '0'
+    jb .unknown_reg
+    cmp al, '9'
+    ja .unknown_reg
+    jmp .reg_num_check
 
 .reg_d_check:
     cmp byte [rdi+2], 'x' ; rdx
@@ -1065,24 +1138,12 @@ parse_register:
 .reg_rdi: mov rax, 7
     ret
 
-; r8-r15 handling
-; Format: r8, r8d, r8w, r8b...
-; Simplification: Just check 'r' + digit
-; r8=8, r9=9, r10=10...
-; token buffer: r 8 ...
-; parse_int handles '8', '10'.
-; So if it starts with 'r' and then digit, parse digit + check range.
-
-    ; We already checked 'r' at start.
-    ; Check if 2nd char is digit.
-    mov al, [rdi+1]
-    sub al, '0'
-    cmp al, 9
-    ja .unknown_reg ; Not a digit (handled above by a,b,c..)
-
+.reg_num_check:
     ; It is a digit. Parse int starting from index 1.
+    ; Need to adjust rsi to point to [rdi+1]
+    ; rdi points to token_buffer (or memory operand start)
     push rsi
-    lea rsi, [token_buffer+1]
+    lea rsi, [rdi+1] ; rdi + 1
     xor rax, rax
     xor rcx, rcx
 .parse_r_loop:
@@ -1102,6 +1163,11 @@ parse_register:
     ; RAX now has register number (e.g. 8, 12)
     ; Range check? 8-15
     ; Actually 0-15 is fine if user writes r0...r7 (not standard but ok)
+    ; DEBUG
+    ; push rax
+    ; add al, '0'
+    ; call print_char
+    ; pop rax
     ret
 
 .unknown_reg:
