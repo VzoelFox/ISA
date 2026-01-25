@@ -5,8 +5,16 @@ cmp.r64.r64         rex=W opcode=0x39 modrm=rm,reg  ; [AI_HINT: Bandingkan dua r
 cmp.r64.imm32       rex=W opcode=0x81 modrm=7 imm32 ; [AI_HINT: Bandingkan register dengan angka 32-bit]
 cmp.r64.imm8        rex=W opcode=0x83 modrm=7 imm8  ; [AI_HINT: Bandingkan register dengan angka 8-bit]
 
-; Test (Logical Compare)
-test.r64.r64        rex=W opcode=0x85 modrm=rm,reg  ; [AI_HINT: Uji bit register (AND logic)]
+cmp.r8.r8           opcode=0x38 modrm=rm,reg        ; [AI_HINT: Bandingkan dua register 8-bit]
+cmp.r8.imm8         opcode=0x80 modrm=7 imm8        ; [AI_HINT: Bandingkan register 8-bit dengan imm8]
+cmp.mem.imm8        opcode=0x80 modrm=7 imm8        ; [AI_HINT: Bandingkan memori dengan imm8]
+
+cmp.r64.mem         rex=W opcode=0x3B modrm=reg,mem ; [AI_HINT: Bandingkan register dengan memori]
+cmp.mem.r64         rex=W opcode=0x39 modrm=mem,reg ; [AI_HINT: Bandingkan memori dengan register]
+cmp.mem.imm32       rex=W opcode=0x81 modrm=7 imm32 ; [AI_HINT: Bandingkan memori dengan imm32]
+
+; Test (Logical Compare) - moved to LOGIKA, but can be here too.
+; test.r64.r64        rex=W opcode=0x85 modrm=rm,reg  ; [AI_HINT: Uji bit register (AND logic)]
 
 ; Unconditional Jump
 jmp.rel32           opcode=0xE9 imm32 ; [AI_HINT: Lompat tanpa syarat (lompat)]
