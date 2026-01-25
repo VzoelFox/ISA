@@ -9,10 +9,10 @@ cmp.r64.imm8        rex=W opcode=0x83 modrm=7 imm8  ; [AI_HINT: Bandingkan regis
 test.r64.r64        rex=W opcode=0x85 modrm=rm,reg  ; [AI_HINT: Uji bit register (AND logic)]
 
 ; Unconditional Jump
-jmp.rel32           opcode=0xE9 rel32 ; [AI_HINT: Lompat tanpa syarat (lompat)]
+jmp.rel32           opcode=0xE9 imm32 ; [AI_HINT: Lompat tanpa syarat (lompat)]
 
 ; Conditional Jumps - Equality
-je.rel32            opcode=0x0F,0x84 rel32  ; [AI_HINT: Lompat jika Sama / Nol]
+je.rel32            opcode=0x0F,0x84 imm32  ; [AI_HINT: Lompat jika Sama / Nol]
 jz.rel32            opcode=0x0F,0x84 rel32  ; [AI_HINT: Alias je]
 jne.rel32           opcode=0x0F,0x85 rel32  ; [AI_HINT: Lompat jika Tidak Sama / Tidak Nol]
 jnz.rel32           opcode=0x0F,0x85 rel32  ; [AI_HINT: Alias jne]

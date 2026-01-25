@@ -1039,23 +1039,23 @@ vzoel_table_values:
 
 vzoel_entry_adc_mem_imm32:
     db 'adc.mem.imm32', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 9 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 129, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 18 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Tambah dengan Carry memori immediate 32-bit]
 
 vzoel_entry_adc_mem_imm8:
     db 'adc.mem.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 131, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 18 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Tambah dengan Carry memori immediate 8-bit]
 
 vzoel_entry_adc_mem_r64:
     db 'adc.mem.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 17, 0, 0 ; Opcode Bytes (Max 3)
     db 4 ; ModRM Type (1=rm,reg)
@@ -1063,23 +1063,23 @@ vzoel_entry_adc_mem_r64:
 
 vzoel_entry_adc_r64_imm32:
     db 'adc.r64.imm32', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 9 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 129, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 18 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Tambah dengan Carry immediate 32-bit]
 
 vzoel_entry_adc_r64_imm8:
     db 'adc.r64.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 131, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 18 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Tambah dengan Carry immediate 8-bit]
 
 vzoel_entry_adc_r64_mem:
     db 'adc.r64.mem', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 19, 0, 0 ; Opcode Bytes (Max 3)
     db 3 ; ModRM Type (1=rm,reg)
@@ -1087,7 +1087,7 @@ vzoel_entry_adc_r64_mem:
 
 vzoel_entry_adc_r64_r64:
     db 'adc.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 17, 0, 0 ; Opcode Bytes (Max 3)
     db 1 ; ModRM Type (1=rm,reg)
@@ -1095,23 +1095,23 @@ vzoel_entry_adc_r64_r64:
 
 vzoel_entry_add_mem_imm32:
     db 'add.mem.imm32', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 9 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 129, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Tambah memori dengan angka 32-bit (+)]
 
 vzoel_entry_add_mem_imm8:
     db 'add.mem.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 131, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Tambah memori dengan angka 8-bit (+)]
 
 vzoel_entry_add_mem_r64:
     db 'add.mem.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 1, 0, 0 ; Opcode Bytes (Max 3)
     db 4 ; ModRM Type (1=rm,reg)
@@ -1119,23 +1119,23 @@ vzoel_entry_add_mem_r64:
 
 vzoel_entry_add_r64_imm32:
     db 'add.r64.imm32', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 9 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 129, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Tambah register dengan angka 32-bit (+)]
 
 vzoel_entry_add_r64_imm8:
     db 'add.r64.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 131, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Tambah register dengan angka 8-bit (+)]
 
 vzoel_entry_add_r64_mem:
     db 'add.r64.mem', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 3, 0, 0 ; Opcode Bytes (Max 3)
     db 3 ; ModRM Type (1=rm,reg)
@@ -1143,7 +1143,7 @@ vzoel_entry_add_r64_mem:
 
 vzoel_entry_add_r64_r64:
     db 'add.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 1, 0, 0 ; Opcode Bytes (Max 3)
     db 1 ; ModRM Type (1=rm,reg)
@@ -1151,7 +1151,7 @@ vzoel_entry_add_r64_r64:
 
 vzoel_entry_addss_xmm_mem:
     db 'addss.xmm.mem', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 3 ; Opcode Len
     db 243, 15, 88 ; Opcode Bytes (Max 3)
     db 3 ; ModRM Type (1=rm,reg)
@@ -1159,7 +1159,7 @@ vzoel_entry_addss_xmm_mem:
 
 vzoel_entry_addss_xmm_xmm:
     db 'addss.xmm.xmm', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 3 ; Opcode Len
     db 243, 15, 88 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1167,23 +1167,23 @@ vzoel_entry_addss_xmm_xmm:
 
 vzoel_entry_and_mem_imm32:
     db 'and.mem.imm32', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 9 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 129, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 20 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Logika AND bitwise memori dengan angka 32-bit (&)]
 
 vzoel_entry_and_mem_imm8:
     db 'and.mem.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 131, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 20 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Logika AND bitwise memori dengan angka 8-bit (&)]
 
 vzoel_entry_and_mem_r64:
     db 'and.mem.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 33, 0, 0 ; Opcode Bytes (Max 3)
     db 4 ; ModRM Type (1=rm,reg)
@@ -1191,23 +1191,23 @@ vzoel_entry_and_mem_r64:
 
 vzoel_entry_and_r64_imm32:
     db 'and.r64.imm32', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 9 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 129, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 20 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Logika AND bitwise register dengan angka 32-bit (&)]
 
 vzoel_entry_and_r64_imm8:
     db 'and.r64.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 131, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 20 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Logika AND bitwise register dengan angka 8-bit (&)]
 
 vzoel_entry_and_r64_mem:
     db 'and.r64.mem', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 35, 0, 0 ; Opcode Bytes (Max 3)
     db 3 ; ModRM Type (1=rm,reg)
@@ -1215,7 +1215,7 @@ vzoel_entry_and_r64_mem:
 
 vzoel_entry_and_r64_r64:
     db 'and.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 33, 0, 0 ; Opcode Bytes (Max 3)
     db 1 ; ModRM Type (1=rm,reg)
@@ -1223,7 +1223,7 @@ vzoel_entry_and_r64_r64:
 
 vzoel_entry_bsf_r64_r64:
     db 'bsf.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 188, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1231,7 +1231,7 @@ vzoel_entry_bsf_r64_r64:
 
 vzoel_entry_bsr_r64_r64:
     db 'bsr.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 189, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1239,15 +1239,15 @@ vzoel_entry_bsr_r64_r64:
 
 vzoel_entry_bt_mem_imm8:
     db 'bt.mem.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 186, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 20 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Uji bit tertentu memori (Bit Test)]
 
 vzoel_entry_bt_mem_r64:
     db 'bt.mem.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 163, 0 ; Opcode Bytes (Max 3)
     db 4 ; ModRM Type (1=rm,reg)
@@ -1255,15 +1255,15 @@ vzoel_entry_bt_mem_r64:
 
 vzoel_entry_bt_r64_imm8:
     db 'bt.r64.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 186, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 20 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Uji bit tertentu (Bit Test)]
 
 vzoel_entry_bt_r64_r64:
     db 'bt.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 163, 0 ; Opcode Bytes (Max 3)
     db 1 ; ModRM Type (1=rm,reg)
@@ -1271,15 +1271,15 @@ vzoel_entry_bt_r64_r64:
 
 vzoel_entry_btc_mem_imm8:
     db 'btc.mem.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 186, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 23 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Uji dan Komplement bit memori (Bit Test & Complement)]
 
 vzoel_entry_btc_mem_r64:
     db 'btc.mem.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 187, 0 ; Opcode Bytes (Max 3)
     db 4 ; ModRM Type (1=rm,reg)
@@ -1287,15 +1287,15 @@ vzoel_entry_btc_mem_r64:
 
 vzoel_entry_btc_r64_imm8:
     db 'btc.r64.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 186, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 23 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Uji dan Komplement bit (Bit Test & Complement)]
 
 vzoel_entry_btc_r64_r64:
     db 'btc.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 187, 0 ; Opcode Bytes (Max 3)
     db 1 ; ModRM Type (1=rm,reg)
@@ -1303,15 +1303,15 @@ vzoel_entry_btc_r64_r64:
 
 vzoel_entry_btr_mem_imm8:
     db 'btr.mem.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 186, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 22 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Uji dan Reset bit memori (Bit Test & Reset)]
 
 vzoel_entry_btr_mem_r64:
     db 'btr.mem.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 179, 0 ; Opcode Bytes (Max 3)
     db 4 ; ModRM Type (1=rm,reg)
@@ -1319,15 +1319,15 @@ vzoel_entry_btr_mem_r64:
 
 vzoel_entry_btr_r64_imm8:
     db 'btr.r64.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 186, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 22 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Uji dan Reset bit (Bit Test & Reset)]
 
 vzoel_entry_btr_r64_r64:
     db 'btr.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 179, 0 ; Opcode Bytes (Max 3)
     db 1 ; ModRM Type (1=rm,reg)
@@ -1335,15 +1335,15 @@ vzoel_entry_btr_r64_r64:
 
 vzoel_entry_bts_mem_imm8:
     db 'bts.mem.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 186, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 21 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Uji dan Set bit memori (Bit Test & Set)]
 
 vzoel_entry_bts_mem_r64:
     db 'bts.mem.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 171, 0 ; Opcode Bytes (Max 3)
     db 4 ; ModRM Type (1=rm,reg)
@@ -1351,15 +1351,15 @@ vzoel_entry_bts_mem_r64:
 
 vzoel_entry_bts_r64_imm8:
     db 'bts.r64.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 186, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 21 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Uji dan Set bit (Bit Test & Set)]
 
 vzoel_entry_bts_r64_r64:
     db 'bts.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 171, 0 ; Opcode Bytes (Max 3)
     db 1 ; ModRM Type (1=rm,reg)
@@ -1367,15 +1367,15 @@ vzoel_entry_bts_r64_r64:
 
 vzoel_entry_call_r64:
     db 'call.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 255, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 18 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Panggil fungsi dari register]
 
 vzoel_entry_call_rel32:
     db 'call.rel32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 232, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1383,7 +1383,7 @@ vzoel_entry_call_rel32:
 
 vzoel_entry_cbw:
     db 'cbw', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 102, 152, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1391,7 +1391,7 @@ vzoel_entry_cbw:
 
 vzoel_entry_cdqe:
     db 'cdqe', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 152, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1399,7 +1399,7 @@ vzoel_entry_cdqe:
 
 vzoel_entry_cld:
     db 'cld', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 252, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1407,7 +1407,7 @@ vzoel_entry_cld:
 
 vzoel_entry_cmova_r64_r64:
     db 'cmova.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 71, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1415,7 +1415,7 @@ vzoel_entry_cmova_r64_r64:
 
 vzoel_entry_cmovae_r64_r64:
     db 'cmovae.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 67, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1423,7 +1423,7 @@ vzoel_entry_cmovae_r64_r64:
 
 vzoel_entry_cmovb_r64_r64:
     db 'cmovb.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 66, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1431,7 +1431,7 @@ vzoel_entry_cmovb_r64_r64:
 
 vzoel_entry_cmovbe_r64_r64:
     db 'cmovbe.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 70, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1439,7 +1439,7 @@ vzoel_entry_cmovbe_r64_r64:
 
 vzoel_entry_cmovc_r64_r64:
     db 'cmovc.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 66, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1447,7 +1447,7 @@ vzoel_entry_cmovc_r64_r64:
 
 vzoel_entry_cmove_r64_r64:
     db 'cmove.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 68, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1455,7 +1455,7 @@ vzoel_entry_cmove_r64_r64:
 
 vzoel_entry_cmovg_r64_r64:
     db 'cmovg.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 79, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1463,7 +1463,7 @@ vzoel_entry_cmovg_r64_r64:
 
 vzoel_entry_cmovge_r64_r64:
     db 'cmovge.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 77, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1471,7 +1471,7 @@ vzoel_entry_cmovge_r64_r64:
 
 vzoel_entry_cmovl_r64_r64:
     db 'cmovl.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 76, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1479,7 +1479,7 @@ vzoel_entry_cmovl_r64_r64:
 
 vzoel_entry_cmovle_r64_r64:
     db 'cmovle.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 78, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1487,7 +1487,7 @@ vzoel_entry_cmovle_r64_r64:
 
 vzoel_entry_cmovnc_r64_r64:
     db 'cmovnc.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 67, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1495,7 +1495,7 @@ vzoel_entry_cmovnc_r64_r64:
 
 vzoel_entry_cmovne_r64_r64:
     db 'cmovne.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 69, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1503,7 +1503,7 @@ vzoel_entry_cmovne_r64_r64:
 
 vzoel_entry_cmovno_r64_r64:
     db 'cmovno.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 65, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1511,7 +1511,7 @@ vzoel_entry_cmovno_r64_r64:
 
 vzoel_entry_cmovnp_r64_r64:
     db 'cmovnp.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 75, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1519,7 +1519,7 @@ vzoel_entry_cmovnp_r64_r64:
 
 vzoel_entry_cmovns_r64_r64:
     db 'cmovns.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 73, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1527,7 +1527,7 @@ vzoel_entry_cmovns_r64_r64:
 
 vzoel_entry_cmovnz_r64_r64:
     db 'cmovnz.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 69, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1535,7 +1535,7 @@ vzoel_entry_cmovnz_r64_r64:
 
 vzoel_entry_cmovo_r64_r64:
     db 'cmovo.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 64, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1543,7 +1543,7 @@ vzoel_entry_cmovo_r64_r64:
 
 vzoel_entry_cmovp_r64_r64:
     db 'cmovp.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 74, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1551,7 +1551,7 @@ vzoel_entry_cmovp_r64_r64:
 
 vzoel_entry_cmovpe_r64_r64:
     db 'cmovpe.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 74, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1559,7 +1559,7 @@ vzoel_entry_cmovpe_r64_r64:
 
 vzoel_entry_cmovpo_r64_r64:
     db 'cmovpo.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 75, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1567,7 +1567,7 @@ vzoel_entry_cmovpo_r64_r64:
 
 vzoel_entry_cmovs_r64_r64:
     db 'cmovs.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 72, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1575,7 +1575,7 @@ vzoel_entry_cmovs_r64_r64:
 
 vzoel_entry_cmovz_r64_r64:
     db 'cmovz.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 68, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1583,23 +1583,23 @@ vzoel_entry_cmovz_r64_r64:
 
 vzoel_entry_cmp_r64_imm32:
     db 'cmp.r64.imm32', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 9 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 129, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 23 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Bandingkan register dengan angka 32-bit]
 
 vzoel_entry_cmp_r64_imm8:
     db 'cmp.r64.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 131, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 23 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Bandingkan register dengan angka 8-bit]
 
 vzoel_entry_cmp_r64_r64:
     db 'cmp.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 57, 0, 0 ; Opcode Bytes (Max 3)
     db 1 ; ModRM Type (1=rm,reg)
@@ -1607,7 +1607,7 @@ vzoel_entry_cmp_r64_r64:
 
 vzoel_entry_cmpsb:
     db 'cmpsb', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 166, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1615,7 +1615,7 @@ vzoel_entry_cmpsb:
 
 vzoel_entry_cmpsd:
     db 'cmpsd', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 167, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1623,7 +1623,7 @@ vzoel_entry_cmpsd:
 
 vzoel_entry_cmpsq:
     db 'cmpsq', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 167, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1631,7 +1631,7 @@ vzoel_entry_cmpsq:
 
 vzoel_entry_cmpsw:
     db 'cmpsw', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 102, 167, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1639,7 +1639,7 @@ vzoel_entry_cmpsw:
 
 vzoel_entry_cmpxchg_r64_r64:
     db 'cmpxchg.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 177, 0 ; Opcode Bytes (Max 3)
     db 4 ; ModRM Type (1=rm,reg)
@@ -1647,7 +1647,7 @@ vzoel_entry_cmpxchg_r64_r64:
 
 vzoel_entry_cpuid:
     db 'cpuid', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 162, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1655,7 +1655,7 @@ vzoel_entry_cpuid:
 
 vzoel_entry_cqo:
     db 'cqo', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 153, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1663,7 +1663,7 @@ vzoel_entry_cqo:
 
 vzoel_entry_crc32_r64_r64:
     db 'crc32.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 4 ; Opcode Len
     db 242, 15, 56, 241 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1671,7 +1671,7 @@ vzoel_entry_crc32_r64_r64:
 
 vzoel_entry_cvtsi2ss_xmm_r64:
     db 'cvtsi2ss.xmm.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 3 ; Opcode Len
     db 243, 15, 42 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1679,7 +1679,7 @@ vzoel_entry_cvtsi2ss_xmm_r64:
 
 vzoel_entry_cvtss2si_r64_xmm:
     db 'cvtss2si.r64.xmm', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 3 ; Opcode Len
     db 243, 15, 45 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1687,7 +1687,7 @@ vzoel_entry_cvtss2si_r64_xmm:
 
 vzoel_entry_cvttss2si_r64_xmm:
     db 'cvttss2si.r64.xmm', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 3 ; Opcode Len
     db 243, 15, 44 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1695,7 +1695,7 @@ vzoel_entry_cvttss2si_r64_xmm:
 
 vzoel_entry_cwde:
     db 'cwde', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 152, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1703,31 +1703,31 @@ vzoel_entry_cwde:
 
 vzoel_entry_dec_mem64:
     db 'dec.mem64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 255, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 17 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Kurang 1 dari memori (--)]
 
 vzoel_entry_dec_r64:
     db 'dec.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 255, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 17 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Kurang 1 dari register (--)]
 
 vzoel_entry_div_r64:
     db 'div.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 247, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 22 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Bagi (unsigned) RDX:RAX dengan register (/ %)]
 
 vzoel_entry_divss_xmm_xmm:
     db 'divss.xmm.xmm', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 3 ; Opcode Len
     db 243, 15, 94 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1735,7 +1735,7 @@ vzoel_entry_divss_xmm_xmm:
 
 vzoel_entry_enter:
     db 'enter', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 200, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1743,15 +1743,15 @@ vzoel_entry_enter:
 
 vzoel_entry_fadd_mem64:
     db 'fadd.mem64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 220, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Tambah st(0) dengan memori]
 
 vzoel_entry_faddp:
     db 'faddp', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 222, 193, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1759,7 +1759,7 @@ vzoel_entry_faddp:
 
 vzoel_entry_fcos:
     db 'fcos', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 217, 255, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1767,15 +1767,15 @@ vzoel_entry_fcos:
 
 vzoel_entry_fdiv_mem64:
     db 'fdiv.mem64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 220, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 22 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Bagi st(0) dengan memori]
 
 vzoel_entry_fdivp:
     db 'fdivp', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 222, 249, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1783,7 +1783,7 @@ vzoel_entry_fdivp:
 
 vzoel_entry_finit:
     db 'finit', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 3 ; Opcode Len
     db 155, 219, 227 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1791,7 +1791,7 @@ vzoel_entry_finit:
 
 vzoel_entry_fld1:
     db 'fld1', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 217, 232, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1799,15 +1799,15 @@ vzoel_entry_fld1:
 
 vzoel_entry_fld_mem64:
     db 'fld.mem64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 221, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Load double (64-bit float) dari memori ke st(0)]
 
 vzoel_entry_fld_st0:
     db 'fld.st0', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 217, 192, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1815,7 +1815,7 @@ vzoel_entry_fld_st0:
 
 vzoel_entry_fldpi:
     db 'fldpi', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 217, 235, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1823,7 +1823,7 @@ vzoel_entry_fldpi:
 
 vzoel_entry_fldz:
     db 'fldz', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 217, 238, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1831,15 +1831,15 @@ vzoel_entry_fldz:
 
 vzoel_entry_fmul_mem64:
     db 'fmul.mem64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 220, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 17 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Kali st(0) dengan memori]
 
 vzoel_entry_fmulp:
     db 'fmulp', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 222, 201, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1847,7 +1847,7 @@ vzoel_entry_fmulp:
 
 vzoel_entry_fptan:
     db 'fptan', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 217, 242, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1855,7 +1855,7 @@ vzoel_entry_fptan:
 
 vzoel_entry_fsin:
     db 'fsin', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 217, 254, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1863,7 +1863,7 @@ vzoel_entry_fsin:
 
 vzoel_entry_fsqrt:
     db 'fsqrt', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 217, 250, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1871,23 +1871,23 @@ vzoel_entry_fsqrt:
 
 vzoel_entry_fstp_mem64:
     db 'fstp.mem64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 221, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 19 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Store double ke memori dan pop st(0)]
 
 vzoel_entry_fsub_mem64:
     db 'fsub.mem64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 220, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 20 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Kurang st(0) dengan memori]
 
 vzoel_entry_fsubp:
     db 'fsubp', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 222, 233, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1895,45 +1895,45 @@ vzoel_entry_fsubp:
 
 vzoel_entry_fungsi:
     db 'fungsi', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_fxrstor_mem:
     db 'fxrstor.mem', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 174, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 17 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Pulihkan state FPU/MXCSR dari memori]
 
 vzoel_entry_fxsave_mem:
     db 'fxsave.mem', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 174, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Simpan state FPU/MXCSR ke memori (512 bytes)]
 
 vzoel_entry_henti:
     db 'henti', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_idiv_r64:
     db 'idiv.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 247, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 23 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Bagi (signed) RDX:RAX dengan register (/ %)]
 
 vzoel_entry_imul_r64_imm32:
     db 'imul.r64.imm32', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 9 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 105, 0, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1941,7 +1941,7 @@ vzoel_entry_imul_r64_imm32:
 
 vzoel_entry_imul_r64_imm8:
     db 'imul.r64.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 107, 0, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1949,7 +1949,7 @@ vzoel_entry_imul_r64_imm8:
 
 vzoel_entry_imul_r64_mem:
     db 'imul.r64.mem', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 175, 0 ; Opcode Bytes (Max 3)
     db 3 ; ModRM Type (1=rm,reg)
@@ -1957,7 +1957,7 @@ vzoel_entry_imul_r64_mem:
 
 vzoel_entry_imul_r64_r64:
     db 'imul.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 175, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -1965,23 +1965,23 @@ vzoel_entry_imul_r64_r64:
 
 vzoel_entry_inc_mem64:
     db 'inc.mem64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 255, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Tambah 1 ke memori (++)]
 
 vzoel_entry_inc_r64:
     db 'inc.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 255, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Tambah 1 ke register (++)]
 
 vzoel_entry_int3:
     db 'int3', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 204, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1989,7 +1989,7 @@ vzoel_entry_int3:
 
 vzoel_entry_ja_rel32:
     db 'ja.rel32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 135, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -1997,7 +1997,7 @@ vzoel_entry_ja_rel32:
 
 vzoel_entry_jae_rel32:
     db 'jae.rel32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 131, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2005,7 +2005,7 @@ vzoel_entry_jae_rel32:
 
 vzoel_entry_jb_rel32:
     db 'jb.rel32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 130, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2013,7 +2013,7 @@ vzoel_entry_jb_rel32:
 
 vzoel_entry_jbe_rel32:
     db 'jbe.rel32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 134, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2021,7 +2021,7 @@ vzoel_entry_jbe_rel32:
 
 vzoel_entry_je_rel32:
     db 'je.rel32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 8 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 132, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2029,7 +2029,7 @@ vzoel_entry_je_rel32:
 
 vzoel_entry_jg_rel32:
     db 'jg.rel32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 143, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2037,7 +2037,7 @@ vzoel_entry_jg_rel32:
 
 vzoel_entry_jge_rel32:
     db 'jge.rel32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 141, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2045,133 +2045,133 @@ vzoel_entry_jge_rel32:
 
 vzoel_entry_jika_beda:
     db 'jika_beda', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_jika_bukan_nol:
     db 'jika_bukan_nol', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_jika_diatas:
     db 'jika_diatas', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_jika_diatas_sama:
     db 'jika_diatas_sama', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_jika_dibawah:
     db 'jika_dibawah', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_jika_dibawah_sama:
     db 'jika_dibawah_sama', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_jika_ganjil:
     db 'jika_ganjil', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_jika_genap:
     db 'jika_genap', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_jika_kurang:
     db 'jika_kurang', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_jika_kurang_sama:
     db 'jika_kurang_sama', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_jika_lebih:
     db 'jika_lebih', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_jika_lebih_sama:
     db 'jika_lebih_sama', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_jika_negatif:
     db 'jika_negatif', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_jika_nol:
     db 'jika_nol', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_jika_overflow:
     db 'jika_overflow', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_jika_positif:
     db 'jika_positif', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_jika_sama:
     db 'jika_sama', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_jika_tidak_overflow:
     db 'jika_tidak_overflow', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_jl_rel32:
     db 'jl.rel32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 140, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2179,7 +2179,7 @@ vzoel_entry_jl_rel32:
 
 vzoel_entry_jle_rel32:
     db 'jle.rel32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 142, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2187,7 +2187,7 @@ vzoel_entry_jle_rel32:
 
 vzoel_entry_jmp_rel32:
     db 'jmp.rel32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 8 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 233, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2195,7 +2195,7 @@ vzoel_entry_jmp_rel32:
 
 vzoel_entry_jne_rel32:
     db 'jne.rel32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 133, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2203,7 +2203,7 @@ vzoel_entry_jne_rel32:
 
 vzoel_entry_jno_rel32:
     db 'jno.rel32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 129, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2211,7 +2211,7 @@ vzoel_entry_jno_rel32:
 
 vzoel_entry_jnp_rel32:
     db 'jnp.rel32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 139, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2219,7 +2219,7 @@ vzoel_entry_jnp_rel32:
 
 vzoel_entry_jns_rel32:
     db 'jns.rel32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 137, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2227,7 +2227,7 @@ vzoel_entry_jns_rel32:
 
 vzoel_entry_jnz_rel32:
     db 'jnz.rel32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 133, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2235,7 +2235,7 @@ vzoel_entry_jnz_rel32:
 
 vzoel_entry_jo_rel32:
     db 'jo.rel32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 128, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2243,7 +2243,7 @@ vzoel_entry_jo_rel32:
 
 vzoel_entry_jp_rel32:
     db 'jp.rel32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 138, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2251,7 +2251,7 @@ vzoel_entry_jp_rel32:
 
 vzoel_entry_jpe_rel32:
     db 'jpe.rel32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 138, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2259,7 +2259,7 @@ vzoel_entry_jpe_rel32:
 
 vzoel_entry_jpo_rel32:
     db 'jpo.rel32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 139, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2267,7 +2267,7 @@ vzoel_entry_jpo_rel32:
 
 vzoel_entry_js_rel32:
     db 'js.rel32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 136, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2275,7 +2275,7 @@ vzoel_entry_js_rel32:
 
 vzoel_entry_jz_rel32:
     db 'jz.rel32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 132, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2283,7 +2283,7 @@ vzoel_entry_jz_rel32:
 
 vzoel_entry_kembali:
     db 'kembali', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 195, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2291,7 +2291,7 @@ vzoel_entry_kembali:
 
 vzoel_entry_lahf:
     db 'lahf', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 159, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2299,21 +2299,21 @@ vzoel_entry_lahf:
 
 vzoel_entry_lainnya:
     db 'lainnya', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_lanjut:
     db 'lanjut', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_lea_r64_mem:
     db 'lea.r64.mem', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 141, 0, 0 ; Opcode Bytes (Max 3)
     db 3 ; ModRM Type (1=rm,reg)
@@ -2321,7 +2321,7 @@ vzoel_entry_lea_r64_mem:
 
 vzoel_entry_leave:
     db 'leave', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 201, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2329,7 +2329,7 @@ vzoel_entry_leave:
 
 vzoel_entry_lfence:
     db 'lfence', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 3 ; Opcode Len
     db 15, 174, 232 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2337,7 +2337,7 @@ vzoel_entry_lfence:
 
 vzoel_entry_lock:
     db 'lock', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 240, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2345,7 +2345,7 @@ vzoel_entry_lock:
 
 vzoel_entry_lodsb:
     db 'lodsb', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 172, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2353,7 +2353,7 @@ vzoel_entry_lodsb:
 
 vzoel_entry_lodsd:
     db 'lodsd', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 173, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2361,7 +2361,7 @@ vzoel_entry_lodsd:
 
 vzoel_entry_lodsq:
     db 'lodsq', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 173, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2369,7 +2369,7 @@ vzoel_entry_lodsq:
 
 vzoel_entry_lodsw:
     db 'lodsw', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 102, 173, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2377,21 +2377,21 @@ vzoel_entry_lodsw:
 
 vzoel_entry_lompat:
     db 'lompat', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_loop:
     db 'loop', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_mfence:
     db 'mfence', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 3 ; Opcode Len
     db 15, 174, 240 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2399,15 +2399,15 @@ vzoel_entry_mfence:
 
 vzoel_entry_mov_mem_imm32:
     db 'mov.mem.imm32', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 9 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 199, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Tulis angka 32-bit ke memori]
 
 vzoel_entry_mov_mem_r64:
     db 'mov.mem.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 137, 0, 0 ; Opcode Bytes (Max 3)
     db 4 ; ModRM Type (1=rm,reg)
@@ -2415,15 +2415,15 @@ vzoel_entry_mov_mem_r64:
 
 vzoel_entry_mov_r64_imm32:
     db 'mov.r64.imm32', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 9 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 199, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Salin angka 32-bit ke register]
 
 vzoel_entry_mov_r64_imm64:
     db 'mov.r64.imm64', 0
-    db 3 ; Flags (1=REX.W, 2=RegInOp)
+    db 3 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 184, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2431,7 +2431,7 @@ vzoel_entry_mov_r64_imm64:
 
 vzoel_entry_mov_r64_mem:
     db 'mov.r64.mem', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 139, 0, 0 ; Opcode Bytes (Max 3)
     db 3 ; ModRM Type (1=rm,reg)
@@ -2439,7 +2439,7 @@ vzoel_entry_mov_r64_mem:
 
 vzoel_entry_mov_r64_r64:
     db 'mov.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 137, 0, 0 ; Opcode Bytes (Max 3)
     db 1 ; ModRM Type (1=rm,reg)
@@ -2447,7 +2447,7 @@ vzoel_entry_mov_r64_r64:
 
 vzoel_entry_movb_mem_r64:
     db 'movb.mem.r64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 136, 0, 0 ; Opcode Bytes (Max 3)
     db 4 ; ModRM Type (1=rm,reg)
@@ -2455,7 +2455,7 @@ vzoel_entry_movb_mem_r64:
 
 vzoel_entry_movsb:
     db 'movsb', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 164, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2463,7 +2463,7 @@ vzoel_entry_movsb:
 
 vzoel_entry_movsd:
     db 'movsd', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 165, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2471,7 +2471,7 @@ vzoel_entry_movsd:
 
 vzoel_entry_movsq:
     db 'movsq', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 165, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2479,7 +2479,7 @@ vzoel_entry_movsq:
 
 vzoel_entry_movss_mem_xmm:
     db 'movss.mem.xmm', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 3 ; Opcode Len
     db 243, 15, 17 ; Opcode Bytes (Max 3)
     db 4 ; ModRM Type (1=rm,reg)
@@ -2487,7 +2487,7 @@ vzoel_entry_movss_mem_xmm:
 
 vzoel_entry_movss_xmm_mem:
     db 'movss.xmm.mem', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 3 ; Opcode Len
     db 243, 15, 16 ; Opcode Bytes (Max 3)
     db 3 ; ModRM Type (1=rm,reg)
@@ -2495,7 +2495,7 @@ vzoel_entry_movss_xmm_mem:
 
 vzoel_entry_movss_xmm_xmm:
     db 'movss.xmm.xmm', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 3 ; Opcode Len
     db 243, 15, 16 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2503,7 +2503,7 @@ vzoel_entry_movss_xmm_xmm:
 
 vzoel_entry_movsw:
     db 'movsw', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 102, 165, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2511,7 +2511,7 @@ vzoel_entry_movsw:
 
 vzoel_entry_movsx_r64_byte:
     db 'movsx.r64.byte', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 190, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -2519,7 +2519,7 @@ vzoel_entry_movsx_r64_byte:
 
 vzoel_entry_movsx_r64_mem:
     db 'movsx.r64.mem', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 190, 0 ; Opcode Bytes (Max 3)
     db 3 ; ModRM Type (1=rm,reg)
@@ -2527,7 +2527,7 @@ vzoel_entry_movsx_r64_mem:
 
 vzoel_entry_movsx_r64_r64:
     db 'movsx.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 190, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -2535,7 +2535,7 @@ vzoel_entry_movsx_r64_r64:
 
 vzoel_entry_movsxd_r64_mem32:
     db 'movsxd.r64.mem32', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 99, 0, 0 ; Opcode Bytes (Max 3)
     db 3 ; ModRM Type (1=rm,reg)
@@ -2543,7 +2543,7 @@ vzoel_entry_movsxd_r64_mem32:
 
 vzoel_entry_movsxd_r64_r32:
     db 'movsxd.r64.r32', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 99, 0, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -2551,7 +2551,7 @@ vzoel_entry_movsxd_r64_r32:
 
 vzoel_entry_movzx_r64_byte:
     db 'movzx.r64.byte', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 182, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -2559,7 +2559,7 @@ vzoel_entry_movzx_r64_byte:
 
 vzoel_entry_movzx_r64_mem:
     db 'movzx.r64.mem', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 182, 0 ; Opcode Bytes (Max 3)
     db 3 ; ModRM Type (1=rm,reg)
@@ -2567,7 +2567,7 @@ vzoel_entry_movzx_r64_mem:
 
 vzoel_entry_movzx_r64_mem16:
     db 'movzx.r64.mem16', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 183, 0 ; Opcode Bytes (Max 3)
     db 3 ; ModRM Type (1=rm,reg)
@@ -2575,7 +2575,7 @@ vzoel_entry_movzx_r64_mem16:
 
 vzoel_entry_movzx_r64_r64:
     db 'movzx.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 182, 0 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -2583,15 +2583,15 @@ vzoel_entry_movzx_r64_r64:
 
 vzoel_entry_mul_r64:
     db 'mul.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 247, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 20 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Kali (unsigned) RAX dengan register (RAX * r64 -> RDX:RAX)]
 
 vzoel_entry_mulss_xmm_xmm:
     db 'mulss.xmm.xmm', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 3 ; Opcode Len
     db 243, 15, 89 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2599,23 +2599,23 @@ vzoel_entry_mulss_xmm_xmm:
 
 vzoel_entry_neg_mem64:
     db 'neg.mem64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 247, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 19 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Negasikan nilai memori ( -x )]
 
 vzoel_entry_neg_r64:
     db 'neg.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 247, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 19 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Negasikan nilai register ( -x )]
 
 vzoel_entry_nop:
     db 'nop', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 144, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2623,39 +2623,39 @@ vzoel_entry_nop:
 
 vzoel_entry_not_mem64:
     db 'not.mem64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 247, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 18 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Logika NOT (negasi bitwise) memori (~)]
 
 vzoel_entry_not_r64:
     db 'not.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 247, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 18 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Logika NOT (negasi bitwise) register (~)]
 
 vzoel_entry_or_mem_imm32:
     db 'or.mem.imm32', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 9 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 129, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 17 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Logika OR bitwise memori dengan angka 32-bit (|)]
 
 vzoel_entry_or_mem_imm8:
     db 'or.mem.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 131, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 17 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Logika OR bitwise memori dengan angka 8-bit (|)]
 
 vzoel_entry_or_mem_r64:
     db 'or.mem.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 9, 0, 0 ; Opcode Bytes (Max 3)
     db 4 ; ModRM Type (1=rm,reg)
@@ -2663,23 +2663,23 @@ vzoel_entry_or_mem_r64:
 
 vzoel_entry_or_r64_imm32:
     db 'or.r64.imm32', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 9 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 129, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 17 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Logika OR bitwise register dengan angka 32-bit (|)]
 
 vzoel_entry_or_r64_imm8:
     db 'or.r64.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 131, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 17 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Logika OR bitwise register dengan angka 8-bit (|)]
 
 vzoel_entry_or_r64_mem:
     db 'or.r64.mem', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 11, 0, 0 ; Opcode Bytes (Max 3)
     db 3 ; ModRM Type (1=rm,reg)
@@ -2687,7 +2687,7 @@ vzoel_entry_or_r64_mem:
 
 vzoel_entry_or_r64_r64:
     db 'or.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 9, 0, 0 ; Opcode Bytes (Max 3)
     db 1 ; ModRM Type (1=rm,reg)
@@ -2695,7 +2695,7 @@ vzoel_entry_or_r64_r64:
 
 vzoel_entry_pause:
     db 'pause', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 243, 144, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2703,7 +2703,7 @@ vzoel_entry_pause:
 
 vzoel_entry_pop_r64:
     db 'pop.r64', 0
-    db 2 ; Flags (1=REX.W, 2=RegInOp)
+    db 2 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 88, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2711,7 +2711,7 @@ vzoel_entry_pop_r64:
 
 vzoel_entry_popcnt_r64_r64:
     db 'popcnt.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 3 ; Opcode Len
     db 243, 15, 184 ; Opcode Bytes (Max 3)
     db 2 ; ModRM Type (1=rm,reg)
@@ -2719,7 +2719,7 @@ vzoel_entry_popcnt_r64_r64:
 
 vzoel_entry_popfq:
     db 'popfq', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 157, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2727,7 +2727,7 @@ vzoel_entry_popfq:
 
 vzoel_entry_push_imm32:
     db 'push.imm32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 8 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 104, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2735,7 +2735,7 @@ vzoel_entry_push_imm32:
 
 vzoel_entry_push_imm8:
     db 'push.imm8', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 4 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 106, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2743,7 +2743,7 @@ vzoel_entry_push_imm8:
 
 vzoel_entry_push_r64:
     db 'push.r64', 0
-    db 2 ; Flags (1=REX.W, 2=RegInOp)
+    db 2 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 80, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2751,7 +2751,7 @@ vzoel_entry_push_r64:
 
 vzoel_entry_pushfq:
     db 'pushfq', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 156, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2759,87 +2759,87 @@ vzoel_entry_pushfq:
 
 vzoel_entry_rcl_mem_cl:
     db 'rcl.mem.cl', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 211, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 18 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Putar bit ke kiri memori melalui Carry (rotate carry left)]
 
 vzoel_entry_rcl_mem_imm8:
     db 'rcl.mem.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 193, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 18 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Putar bit ke kiri memori melalui Carry (rotate carry left)]
 
 vzoel_entry_rcl_r64_cl:
     db 'rcl.r64.cl', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 211, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 18 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Putar bit ke kiri melalui Carry (rotate carry left)]
 
 vzoel_entry_rcl_r64_imm8:
     db 'rcl.r64.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 193, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 18 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Putar bit ke kiri melalui Carry (rotate carry left)]
 
 vzoel_entry_rcr_mem_cl:
     db 'rcr.mem.cl', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 211, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 19 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Putar bit ke kanan memori melalui Carry (rotate carry right)]
 
 vzoel_entry_rcr_mem_imm8:
     db 'rcr.mem.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 193, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 19 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Putar bit ke kanan memori melalui Carry (rotate carry right)]
 
 vzoel_entry_rcr_r64_cl:
     db 'rcr.r64.cl', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 211, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 19 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Putar bit ke kanan melalui Carry (rotate carry right)]
 
 vzoel_entry_rcr_r64_imm8:
     db 'rcr.r64.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 193, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 19 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Putar bit ke kanan melalui Carry (rotate carry right)]
 
 vzoel_entry_rdfsbase_r64:
     db 'rdfsbase.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 3 ; Opcode Len
     db 243, 15, 174 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Baca FS Base ke register (TLS)]
 
 vzoel_entry_rdgsbase_r64:
     db 'rdgsbase.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 3 ; Opcode Len
     db 243, 15, 174 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 18 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Baca GS Base ke register]
 
 vzoel_entry_rdtsc:
     db 'rdtsc', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 49, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2847,7 +2847,7 @@ vzoel_entry_rdtsc:
 
 vzoel_entry_rep:
     db 'rep', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 243, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2855,7 +2855,7 @@ vzoel_entry_rep:
 
 vzoel_entry_repe:
     db 'repe', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 243, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2863,7 +2863,7 @@ vzoel_entry_repe:
 
 vzoel_entry_repne:
     db 'repne', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 242, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2871,7 +2871,7 @@ vzoel_entry_repne:
 
 vzoel_entry_repnz:
     db 'repnz', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 242, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2879,7 +2879,7 @@ vzoel_entry_repnz:
 
 vzoel_entry_repz:
     db 'repz', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 243, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2887,7 +2887,7 @@ vzoel_entry_repz:
 
 vzoel_entry_ret:
     db 'ret', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 195, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2895,71 +2895,71 @@ vzoel_entry_ret:
 
 vzoel_entry_rol_mem_cl:
     db 'rol.mem.cl', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 211, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Putar bit ke kiri memori (rotate left) sebesar isi register CL]
 
 vzoel_entry_rol_mem_imm8:
     db 'rol.mem.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 193, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Putar bit ke kiri memori (rotate left) sebesar immediate 8-bit]
 
 vzoel_entry_rol_r64_cl:
     db 'rol.r64.cl', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 211, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Putar bit ke kiri (rotate left) sebesar isi register CL]
 
 vzoel_entry_rol_r64_imm8:
     db 'rol.r64.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 193, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Putar bit ke kiri (rotate left) sebesar immediate 8-bit]
 
 vzoel_entry_ror_mem_cl:
     db 'ror.mem.cl', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 211, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 17 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Putar bit ke kanan memori (rotate right) sebesar isi register CL]
 
 vzoel_entry_ror_mem_imm8:
     db 'ror.mem.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 193, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 17 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Putar bit ke kanan memori (rotate right) sebesar immediate 8-bit]
 
 vzoel_entry_ror_r64_cl:
     db 'ror.r64.cl', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 211, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 17 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Putar bit ke kanan (rotate right) sebesar isi register CL]
 
 vzoel_entry_ror_r64_imm8:
     db 'ror.r64.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 193, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 17 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Putar bit ke kanan (rotate right) sebesar immediate 8-bit]
 
 vzoel_entry_sahf:
     db 'sahf', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 158, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2967,95 +2967,95 @@ vzoel_entry_sahf:
 
 vzoel_entry_sal_mem_cl:
     db 'sal.mem.cl', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 211, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 20 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Alias shl (<<)]
 
 vzoel_entry_sal_mem_imm8:
     db 'sal.mem.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 193, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 20 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Alias shl (<<)]
 
 vzoel_entry_sal_r64_cl:
     db 'sal.r64.cl', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 211, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 20 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Alias shl (<<)]
 
 vzoel_entry_sal_r64_imm8:
     db 'sal.r64.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 193, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 20 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Alias shl (<<)]
 
 vzoel_entry_sar_mem_cl:
     db 'sar.mem.cl', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 211, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 23 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Geser bit ke kanan memori (arithmetic shift right) sebesar isi register CL]
 
 vzoel_entry_sar_mem_imm8:
     db 'sar.mem.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 193, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 23 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Geser bit ke kanan memori (arithmetic shift right) sebesar immediate 8-bit]
 
 vzoel_entry_sar_r64:
     db 'sar.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 211, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 23 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Alias sar.r64.cl]
 
 vzoel_entry_sar_r64_cl:
     db 'sar.r64.cl', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 211, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 23 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Geser bit ke kanan (arithmetic shift right) sebesar isi register CL]
 
 vzoel_entry_sar_r64_imm8:
     db 'sar.r64.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 193, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 23 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Geser bit ke kanan (arithmetic shift right) sebesar immediate 8-bit]
 
 vzoel_entry_sbb_mem_imm32:
     db 'sbb.mem.imm32', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 9 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 129, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 19 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Kurang dengan Borrow memori immediate 32-bit]
 
 vzoel_entry_sbb_mem_imm8:
     db 'sbb.mem.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 131, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 19 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Kurang dengan Borrow memori immediate 8-bit]
 
 vzoel_entry_sbb_mem_r64:
     db 'sbb.mem.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 25, 0, 0 ; Opcode Bytes (Max 3)
     db 4 ; ModRM Type (1=rm,reg)
@@ -3063,23 +3063,23 @@ vzoel_entry_sbb_mem_r64:
 
 vzoel_entry_sbb_r64_imm32:
     db 'sbb.r64.imm32', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 9 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 129, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 19 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Kurang dengan Borrow immediate 32-bit]
 
 vzoel_entry_sbb_r64_imm8:
     db 'sbb.r64.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 131, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 19 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Kurang dengan Borrow immediate 8-bit]
 
 vzoel_entry_sbb_r64_mem:
     db 'sbb.r64.mem', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 27, 0, 0 ; Opcode Bytes (Max 3)
     db 3 ; ModRM Type (1=rm,reg)
@@ -3087,7 +3087,7 @@ vzoel_entry_sbb_r64_mem:
 
 vzoel_entry_sbb_r64_r64:
     db 'sbb.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 25, 0, 0 ; Opcode Bytes (Max 3)
     db 1 ; ModRM Type (1=rm,reg)
@@ -3095,7 +3095,7 @@ vzoel_entry_sbb_r64_r64:
 
 vzoel_entry_scasb:
     db 'scasb', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 174, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -3103,7 +3103,7 @@ vzoel_entry_scasb:
 
 vzoel_entry_scasd:
     db 'scasd', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 175, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -3111,7 +3111,7 @@ vzoel_entry_scasd:
 
 vzoel_entry_scasq:
     db 'scasq', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 175, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -3119,7 +3119,7 @@ vzoel_entry_scasq:
 
 vzoel_entry_scasw:
     db 'scasw', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 102, 175, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -3127,288 +3127,288 @@ vzoel_entry_scasw:
 
 vzoel_entry_selama:
     db 'selama', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_selama_beda:
     db 'selama_beda', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_selama_bukan_nol:
     db 'selama_bukan_nol', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_selama_diatas:
     db 'selama_diatas', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_selama_diatas_sama:
     db 'selama_diatas_sama', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_selama_dibawah:
     db 'selama_dibawah', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_selama_dibawah_sama:
     db 'selama_dibawah_sama', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_selama_kurang:
     db 'selama_kurang', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_selama_kurang_sama:
     db 'selama_kurang_sama', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_selama_lebih:
     db 'selama_lebih', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_selama_lebih_sama:
     db 'selama_lebih_sama', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_selama_negatif:
     db 'selama_negatif', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_selama_nol:
     db 'selama_nol', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_selama_positif:
     db 'selama_positif', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_selama_sama:
     db 'selama_sama', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_seta_r64:
     db 'seta.r64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 151, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Set byte 1 jika Di Atas (Unsigned)]
 
 vzoel_entry_setae_r64:
     db 'setae.r64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 147, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Set byte 1 jika Di Atas/Sama (Unsigned)]
 
 vzoel_entry_setb_r64:
     db 'setb.r64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 146, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Set byte 1 jika Di Bawah (Unsigned)]
 
 vzoel_entry_setbe_r64:
     db 'setbe.r64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 150, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Set byte 1 jika Di Bawah/Sama (Unsigned)]
 
 vzoel_entry_setc_r64:
     db 'setc.r64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 146, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Alias setb (Carry)]
 
 vzoel_entry_sete_r64:
     db 'sete.r64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 148, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Set byte 1 jika Sama/Nol, 0 jika tidak]
 
 vzoel_entry_setg_r64:
     db 'setg.r64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 159, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Set byte 1 jika Lebih Besar (Signed)]
 
 vzoel_entry_setge_r64:
     db 'setge.r64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 157, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Set byte 1 jika Lebih Besar/Sama (Signed)]
 
 vzoel_entry_setl_r64:
     db 'setl.r64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 156, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Set byte 1 jika Lebih Kecil (Signed)]
 
 vzoel_entry_setle_r64:
     db 'setle.r64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 158, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Set byte 1 jika Lebih Kecil/Sama (Signed)]
 
 vzoel_entry_setnc_r64:
     db 'setnc.r64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 147, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Alias setae (Not Carry)]
 
 vzoel_entry_setne_r64:
     db 'setne.r64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 149, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Set byte 1 jika Tidak Sama/Tidak Nol]
 
 vzoel_entry_setno_r64:
     db 'setno.r64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 145, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Set byte 1 jika Tidak Overflow]
 
 vzoel_entry_setnp_r64:
     db 'setnp.r64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 155, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Set byte 1 jika Paritas Ganjil]
 
 vzoel_entry_setns_r64:
     db 'setns.r64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 153, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Set byte 1 jika Positif]
 
 vzoel_entry_setnz_r64:
     db 'setnz.r64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 149, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Alias setne]
 
 vzoel_entry_seto_r64:
     db 'seto.r64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 144, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Set byte 1 jika Overflow]
 
 vzoel_entry_setp_r64:
     db 'setp.r64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 154, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Set byte 1 jika Paritas Genap]
 
 vzoel_entry_setpe_r64:
     db 'setpe.r64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 154, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Alias setp]
 
 vzoel_entry_setpo_r64:
     db 'setpo.r64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 155, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Alias setnp]
 
 vzoel_entry_sets_r64:
     db 'sets.r64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 152, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Set byte 1 jika Negatif]
 
 vzoel_entry_setz_r64:
     db 'setz.r64', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 148, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 16 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Alias sete]
 
 vzoel_entry_sfence:
     db 'sfence', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 3 ; Opcode Len
     db 15, 174, 248 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -3416,87 +3416,87 @@ vzoel_entry_sfence:
 
 vzoel_entry_shl_mem_cl:
     db 'shl.mem.cl', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 211, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 20 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Geser bit ke kiri memori (shift left) sebesar isi register CL (<<)]
 
 vzoel_entry_shl_mem_imm8:
     db 'shl.mem.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 193, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 20 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Geser bit ke kiri memori (shift left) sebesar immediate 8-bit (<<)]
 
 vzoel_entry_shl_r64:
     db 'shl.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 211, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 20 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Alias shl.r64.cl]
 
 vzoel_entry_shl_r64_cl:
     db 'shl.r64.cl', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 211, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 20 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Geser bit ke kiri (shift left) sebesar isi register CL (<<)]
 
 vzoel_entry_shl_r64_imm8:
     db 'shl.r64.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 193, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 20 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Geser bit ke kiri (shift left) sebesar immediate 8-bit (<<)]
 
 vzoel_entry_shr_mem_cl:
     db 'shr.mem.cl', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 211, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 21 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Geser bit ke kanan memori (logical shift right) sebesar isi register CL (>>)]
 
 vzoel_entry_shr_mem_imm8:
     db 'shr.mem.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 193, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 21 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Geser bit ke kanan memori (logical shift right) sebesar immediate 8-bit (>>)]
 
 vzoel_entry_shr_r64:
     db 'shr.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 211, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 21 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Alias shr.r64.cl]
 
 vzoel_entry_shr_r64_cl:
     db 'shr.r64.cl', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 211, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 21 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Geser bit ke kanan (logical shift right) sebesar isi register CL (>>)]
 
 vzoel_entry_shr_r64_imm8:
     db 'shr.r64.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 193, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 21 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Geser bit ke kanan (logical shift right) sebesar immediate 8-bit (>>)]
 
 vzoel_entry_std:
     db 'std', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 253, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -3504,7 +3504,7 @@ vzoel_entry_std:
 
 vzoel_entry_stosb:
     db 'stosb', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 170, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -3512,7 +3512,7 @@ vzoel_entry_stosb:
 
 vzoel_entry_stosd:
     db 'stosd', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 171, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -3520,7 +3520,7 @@ vzoel_entry_stosd:
 
 vzoel_entry_stosq:
     db 'stosq', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 171, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -3528,7 +3528,7 @@ vzoel_entry_stosq:
 
 vzoel_entry_stosw:
     db 'stosw', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 102, 171, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -3536,30 +3536,30 @@ vzoel_entry_stosw:
 
 vzoel_entry_struktur:
     db 'struktur', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_sub_mem_imm32:
     db 'sub.mem.imm32', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 9 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 129, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 21 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Kurang memori dengan angka 32-bit (-)]
 
 vzoel_entry_sub_mem_imm8:
     db 'sub.mem.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 131, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 21 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Kurang memori dengan angka 8-bit (-)]
 
 vzoel_entry_sub_mem_r64:
     db 'sub.mem.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 41, 0, 0 ; Opcode Bytes (Max 3)
     db 4 ; ModRM Type (1=rm,reg)
@@ -3567,23 +3567,23 @@ vzoel_entry_sub_mem_r64:
 
 vzoel_entry_sub_r64_imm32:
     db 'sub.r64.imm32', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 9 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 129, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 21 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Kurang register dengan angka 32-bit (-)]
 
 vzoel_entry_sub_r64_imm8:
     db 'sub.r64.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 131, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 21 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Kurang register dengan angka 8-bit (-)]
 
 vzoel_entry_sub_r64_mem:
     db 'sub.r64.mem', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 43, 0, 0 ; Opcode Bytes (Max 3)
     db 3 ; ModRM Type (1=rm,reg)
@@ -3591,7 +3591,7 @@ vzoel_entry_sub_r64_mem:
 
 vzoel_entry_sub_r64_r64:
     db 'sub.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 41, 0, 0 ; Opcode Bytes (Max 3)
     db 1 ; ModRM Type (1=rm,reg)
@@ -3599,7 +3599,7 @@ vzoel_entry_sub_r64_r64:
 
 vzoel_entry_subss_xmm_xmm:
     db 'subss.xmm.xmm', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 3 ; Opcode Len
     db 243, 15, 92 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -3607,7 +3607,7 @@ vzoel_entry_subss_xmm_xmm:
 
 vzoel_entry_syscall:
     db 'syscall', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 5, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -3615,7 +3615,7 @@ vzoel_entry_syscall:
 
 vzoel_entry_test_r64_r64:
     db 'test.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 133, 0, 0 ; Opcode Bytes (Max 3)
     db 1 ; ModRM Type (1=rm,reg)
@@ -3623,42 +3623,42 @@ vzoel_entry_test_r64_r64:
 
 vzoel_entry_tutup_fungsi:
     db 'tutup_fungsi', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_tutup_jika:
     db 'tutup_jika', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_tutup_loop:
     db 'tutup_loop', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_tutup_selama:
     db 'tutup_selama', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_tutup_struktur:
     db 'tutup_struktur', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 0 ; Opcode Len
     db 0, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
 
 vzoel_entry_ucomiss_xmm_xmm:
     db 'ucomiss.xmm.xmm', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 46, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -3666,7 +3666,7 @@ vzoel_entry_ucomiss_xmm_xmm:
 
 vzoel_entry_ud2:
     db 'ud2', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 11, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -3674,23 +3674,23 @@ vzoel_entry_ud2:
 
 vzoel_entry_wrfsbase_r64:
     db 'wrfsbase.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 3 ; Opcode Len
     db 243, 15, 174 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 17 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Tulis FS Base dari register (TLS)]
 
 vzoel_entry_wrgsbase_r64:
     db 'wrgsbase.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 3 ; Opcode Len
     db 243, 15, 174 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 19 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Tulis GS Base dari register]
 
 vzoel_entry_xchg_r64_r64:
     db 'xchg.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 135, 0, 0 ; Opcode Bytes (Max 3)
     db 1 ; ModRM Type (1=rm,reg)
@@ -3698,7 +3698,7 @@ vzoel_entry_xchg_r64_r64:
 
 vzoel_entry_xlat:
     db 'xlat', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp)
+    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 215, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -3706,23 +3706,23 @@ vzoel_entry_xlat:
 
 vzoel_entry_xor_mem_imm32:
     db 'xor.mem.imm32', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 9 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 129, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 22 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Logika XOR bitwise memori dengan angka 32-bit (^)]
 
 vzoel_entry_xor_mem_imm8:
     db 'xor.mem.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 131, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 22 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Logika XOR bitwise memori dengan angka 8-bit (^)]
 
 vzoel_entry_xor_mem_r64:
     db 'xor.mem.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 49, 0, 0 ; Opcode Bytes (Max 3)
     db 4 ; ModRM Type (1=rm,reg)
@@ -3730,23 +3730,23 @@ vzoel_entry_xor_mem_r64:
 
 vzoel_entry_xor_r64_imm32:
     db 'xor.r64.imm32', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 9 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 129, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 22 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Logika XOR bitwise register dengan angka 32-bit (^)]
 
 vzoel_entry_xor_r64_imm8:
     db 'xor.r64.imm8', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 5 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 131, 0, 0 ; Opcode Bytes (Max 3)
-    db 0 ; ModRM Type (1=rm,reg)
+    db 22 ; ModRM Type (1=rm,reg)
     ; [AI_HINT: Logika XOR bitwise register dengan angka 8-bit (^)]
 
 vzoel_entry_xor_r64_mem:
     db 'xor.r64.mem', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 51, 0, 0 ; Opcode Bytes (Max 3)
     db 3 ; ModRM Type (1=rm,reg)
@@ -3754,7 +3754,7 @@ vzoel_entry_xor_r64_mem:
 
 vzoel_entry_xor_r64_r64:
     db 'xor.r64.r64', 0
-    db 1 ; Flags (1=REX.W, 2=RegInOp)
+    db 1 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 49, 0, 0 ; Opcode Bytes (Max 3)
     db 1 ; ModRM Type (1=rm,reg)
