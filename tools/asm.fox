@@ -93,11 +93,10 @@ start:
     cmp rax, 0
     je .pass_done
 
-    ; Check for Label Definition (Ends with :)
-    lea rdi, [token_buffer]
-    mov rcx, rax ; length
-    cmp byte [rdi + rcx - 1], ':'
-    je .handle_label_def
+    ; Check for Label Definition
+    call try_parse_label
+    cmp rax, 1
+    je .assemble_loop ; Label handled, continue
 
     ; Hash the token
     lea rdi, [token_buffer]
@@ -372,24 +371,6 @@ start:
 
     jmp exit
 
-.handle_label_def:
-    ; Pass 1: Add to symbol table
-    cmp qword [pass_count], 1
-    jne .assemble_loop
-
-    ; Remove colon
-    mov byte [rdi + rcx - 1], 0
-    dec rcx
-
-    ; Hash
-    mov rsi, rcx
-    call fnv1a_hash
-
-    ; Add Symbol (Offset = current_offset)
-    mov rbx, [current_offset]
-    call add_symbol
-    jmp .assemble_loop
-
 .pass_done:
     cmp qword [pass_count], 1
     jne .finish
@@ -544,6 +525,44 @@ find_symbol:
 .not_found_sym:
     xor rbx, rbx
     xor rcx, rcx
+    ret
+
+try_parse_label:
+    ; Input: token_buffer, rax (token length)
+    ; Output: rax=1 if label handled, 0 if not
+
+    lea rdi, [token_buffer]
+    mov rcx, rax ; length
+
+    ; Check if ends with ':'
+    cmp byte [rdi + rcx - 1], ':'
+    jne .not_a_label
+
+    ; Is Label Definition
+    ; Pass 1: Add to symbol table
+    cmp qword [pass_count], 1
+    jne .label_handled
+
+    ; Remove colon
+    mov byte [rdi + rcx - 1], 0
+    dec rcx
+
+    ; Hash
+    mov rsi, rcx
+    push rdi
+    call fnv1a_hash
+    pop rdi
+
+    ; Add Symbol (Offset = current_offset)
+    mov rbx, [current_offset]
+    call add_symbol
+
+.label_handled:
+    mov rax, 1
+    ret
+
+.not_a_label:
+    mov rax, 0
     ret
 
 get_token:
