@@ -9,6 +9,10 @@ and.mem.imm8        rex=W opcode=0x83 modrm=4 imm8  ; [AI_HINT: Logika AND bitwi
 and.r64.imm32       rex=W opcode=0x81 modrm=4 imm32 ; [AI_HINT: Logika AND bitwise register dengan angka 32-bit (&)]
 and.mem.imm32       rex=W opcode=0x81 modrm=4 imm32 ; [AI_HINT: Logika AND bitwise memori dengan angka 32-bit (&)]
 
+and.r8.r8           opcode=0x20 modrm=rm,reg        ; [AI_HINT: Logika AND bitwise register 8-bit (&)]
+and.r8.imm8         opcode=0x80 modrm=4 imm8        ; [AI_HINT: Logika AND bitwise register 8-bit dengan imm8 (&)]
+and.mem.imm8        opcode=0x80 modrm=4 imm8        ; [AI_HINT: Logika AND bitwise memori dengan imm8 (&)]
+
 ; OR
 or.r64.r64          rex=W opcode=0x09 modrm=rm,reg  ; [AI_HINT: Logika OR bitwise register dengan register (|)]
 or.r64.mem          rex=W opcode=0x0B modrm=reg,mem ; [AI_HINT: Logika OR bitwise register dengan memori (|)]
@@ -17,6 +21,10 @@ or.r64.imm8         rex=W opcode=0x83 modrm=1 imm8  ; [AI_HINT: Logika OR bitwis
 or.mem.imm8         rex=W opcode=0x83 modrm=1 imm8  ; [AI_HINT: Logika OR bitwise memori dengan angka 8-bit (|)]
 or.r64.imm32        rex=W opcode=0x81 modrm=1 imm32 ; [AI_HINT: Logika OR bitwise register dengan angka 32-bit (|)]
 or.mem.imm32        rex=W opcode=0x81 modrm=1 imm32 ; [AI_HINT: Logika OR bitwise memori dengan angka 32-bit (|)]
+
+or.r8.r8            opcode=0x08 modrm=rm,reg        ; [AI_HINT: Logika OR bitwise register 8-bit (|)]
+or.r8.imm8          opcode=0x80 modrm=1 imm8        ; [AI_HINT: Logika OR bitwise register 8-bit dengan imm8 (|)]
+or.mem.imm8         opcode=0x80 modrm=1 imm8        ; [AI_HINT: Logika OR bitwise memori dengan imm8 (|)]
 
 ; XOR
 xor.r64.r64         rex=W opcode=0x31 modrm=rm,reg  ; [AI_HINT: Logika XOR bitwise register dengan register (^)]
@@ -27,9 +35,22 @@ xor.mem.imm8        rex=W opcode=0x83 modrm=6 imm8  ; [AI_HINT: Logika XOR bitwi
 xor.r64.imm32       rex=W opcode=0x81 modrm=6 imm32 ; [AI_HINT: Logika XOR bitwise register dengan angka 32-bit (^)]
 xor.mem.imm32       rex=W opcode=0x81 modrm=6 imm32 ; [AI_HINT: Logika XOR bitwise memori dengan angka 32-bit (^)]
 
+xor.r8.r8           opcode=0x30 modrm=rm,reg        ; [AI_HINT: Logika XOR bitwise register 8-bit (^)]
+xor.r8.imm8         opcode=0x80 modrm=6 imm8        ; [AI_HINT: Logika XOR bitwise register 8-bit dengan imm8 (^)]
+xor.mem.imm8        opcode=0x80 modrm=6 imm8        ; [AI_HINT: Logika XOR bitwise memori dengan imm8 (^)]
+
+; TEST
+test.r64.r64        rex=W opcode=0x85 modrm=rm,reg  ; [AI_HINT: Uji bit register (AND logic)]
+test.r8.r8          opcode=0x84 modrm=rm,reg        ; [AI_HINT: Uji bit register 8-bit]
+test.r8.imm8        opcode=0xF6 modrm=0 imm8        ; [AI_HINT: Uji bit register 8-bit dengan imm8]
+test.mem.imm8       opcode=0xF6 modrm=0 imm8        ; [AI_HINT: Uji bit memori dengan imm8]
+test.r64.imm32      rex=W opcode=0xF7 modrm=0 imm32 ; [AI_HINT: Uji bit register dengan imm32]
+test.mem.imm32      rex=W opcode=0xF7 modrm=0 imm32 ; [AI_HINT: Uji bit memori dengan imm32]
+
 ; NOT (One's Complement)
 not.r64             rex=W opcode=0xF7 modrm=2       ; [AI_HINT: Logika NOT (negasi bitwise) register (~)]
 not.mem64           rex=W opcode=0xF7 modrm=2       ; [AI_HINT: Logika NOT (negasi bitwise) memori (~)]
+not.r8              opcode=0xF6 modrm=2             ; [AI_HINT: Logika NOT register 8-bit]
 
 ; Shift Left (Arithmetic/Logical are same for Left)
 shl.r64.imm8        rex=W opcode=0xC1 modrm=4 imm8  ; [AI_HINT: Geser bit ke kiri (shift left) sebesar immediate 8-bit (<<)]
@@ -42,6 +63,9 @@ sal.mem.imm8        rex=W opcode=0xC1 modrm=4 imm8  ; [AI_HINT: Alias shl (<<)]
 sal.r64.cl          rex=W opcode=0xD3 modrm=4       ; [AI_HINT: Alias shl (<<)]
 sal.mem.cl          rex=W opcode=0xD3 modrm=4       ; [AI_HINT: Alias shl (<<)]
 
+shl.r8.imm8         opcode=0xC0 modrm=4 imm8        ; [AI_HINT: Shift left r8 by imm8]
+shl.r8.cl           opcode=0xD2 modrm=4             ; [AI_HINT: Shift left r8 by cl]
+
 ; Shift Right (Logical)
 shr.r64.imm8        rex=W opcode=0xC1 modrm=5 imm8  ; [AI_HINT: Geser bit ke kanan (logical shift right) sebesar immediate 8-bit (>>)]
 shr.mem.imm8        rex=W opcode=0xC1 modrm=5 imm8  ; [AI_HINT: Geser bit ke kanan memori (logical shift right) sebesar immediate 8-bit (>>)]
@@ -49,12 +73,18 @@ shr.r64.cl          rex=W opcode=0xD3 modrm=5       ; [AI_HINT: Geser bit ke kan
 shr.mem.cl          rex=W opcode=0xD3 modrm=5       ; [AI_HINT: Geser bit ke kanan memori (logical shift right) sebesar isi register CL (>>)]
 shr.r64             rex=W opcode=0xD3 modrm=5       ; [AI_HINT: Alias shr.r64.cl]
 
+shr.r8.imm8         opcode=0xC0 modrm=5 imm8        ; [AI_HINT: Shift right r8 by imm8]
+shr.r8.cl           opcode=0xD2 modrm=5             ; [AI_HINT: Shift right r8 by cl]
+
 ; Shift Right (Arithmetic - preserves sign)
 sar.r64.imm8        rex=W opcode=0xC1 modrm=7 imm8  ; [AI_HINT: Geser bit ke kanan (arithmetic shift right) sebesar immediate 8-bit]
 sar.mem.imm8        rex=W opcode=0xC1 modrm=7 imm8  ; [AI_HINT: Geser bit ke kanan memori (arithmetic shift right) sebesar immediate 8-bit]
 sar.r64.cl          rex=W opcode=0xD3 modrm=7       ; [AI_HINT: Geser bit ke kanan (arithmetic shift right) sebesar isi register CL]
 sar.mem.cl          rex=W opcode=0xD3 modrm=7       ; [AI_HINT: Geser bit ke kanan memori (arithmetic shift right) sebesar isi register CL]
 sar.r64             rex=W opcode=0xD3 modrm=7       ; [AI_HINT: Alias sar.r64.cl]
+
+sar.r8.imm8         opcode=0xC0 modrm=7 imm8        ; [AI_HINT: Arithmetic shift right r8 by imm8]
+sar.r8.cl           opcode=0xD2 modrm=7             ; [AI_HINT: Arithmetic shift right r8 by cl]
 
 ; Rotates
 rol.r64.imm8        rex=W opcode=0xC1 modrm=0 imm8  ; [AI_HINT: Putar bit ke kiri (rotate left) sebesar immediate 8-bit]
@@ -66,6 +96,11 @@ ror.mem.imm8        rex=W opcode=0xC1 modrm=1 imm8  ; [AI_HINT: Putar bit ke kan
 ror.r64.cl          rex=W opcode=0xD3 modrm=1       ; [AI_HINT: Putar bit ke kanan (rotate right) sebesar isi register CL]
 ror.mem.cl          rex=W opcode=0xD3 modrm=1       ; [AI_HINT: Putar bit ke kanan memori (rotate right) sebesar isi register CL]
 
+rol.r8.imm8         opcode=0xC0 modrm=0 imm8        ; [AI_HINT: Rotate left r8 by imm8]
+rol.r8.cl           opcode=0xD2 modrm=0             ; [AI_HINT: Rotate left r8 by cl]
+ror.r8.imm8         opcode=0xC0 modrm=1 imm8        ; [AI_HINT: Rotate right r8 by imm8]
+ror.r8.cl           opcode=0xD2 modrm=1             ; [AI_HINT: Rotate right r8 by cl]
+
 ; Rotate through Carry
 rcl.r64.imm8        rex=W opcode=0xC1 modrm=2 imm8  ; [AI_HINT: Putar bit ke kiri melalui Carry (rotate carry left)]
 rcl.mem.imm8        rex=W opcode=0xC1 modrm=2 imm8  ; [AI_HINT: Putar bit ke kiri memori melalui Carry (rotate carry left)]
@@ -75,6 +110,11 @@ rcr.r64.imm8        rex=W opcode=0xC1 modrm=3 imm8  ; [AI_HINT: Putar bit ke kan
 rcr.mem.imm8        rex=W opcode=0xC1 modrm=3 imm8  ; [AI_HINT: Putar bit ke kanan memori melalui Carry (rotate carry right)]
 rcr.r64.cl          rex=W opcode=0xD3 modrm=3       ; [AI_HINT: Putar bit ke kanan melalui Carry (rotate carry right)]
 rcr.mem.cl          rex=W opcode=0xD3 modrm=3       ; [AI_HINT: Putar bit ke kanan memori melalui Carry (rotate carry right)]
+
+rcl.r8.imm8         opcode=0xC0 modrm=2 imm8        ; [AI_HINT: Rotate carry left r8 by imm8]
+rcl.r8.cl           opcode=0xD2 modrm=2             ; [AI_HINT: Rotate carry left r8 by cl]
+rcr.r8.imm8         opcode=0xC0 modrm=3 imm8        ; [AI_HINT: Rotate carry right r8 by imm8]
+rcr.r8.cl           opcode=0xD2 modrm=3             ; [AI_HINT: Rotate carry right r8 by cl]
 
 ; Advanced Bit Operations
 bsf.r64.r64         rex=W opcode=0x0F,0xBC modrm=reg,rm ; [AI_HINT: Cari bit set pertama dari LSB (Bit Scan Forward)]
