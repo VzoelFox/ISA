@@ -65,6 +65,7 @@ start:
     cmp rax, -1
     je error_mmap
     mov [source_ptr], rax
+    mov [start_ptr], rax ; Save start for rewind
 
     ; Calculate Source End
     add rax, [input_size]
@@ -80,11 +81,23 @@ start:
     mov [rdi], rax
     add qword [output_ptr], 8
 
+    mov qword [pass_count], 1
+
+.pass_start:
+    ; Reset current_offset
+    mov qword [current_offset], 0
+
     ; --- MAIN LOOP ---
 .assemble_loop:
     call get_token
     cmp rax, 0
-    je .finish
+    je .pass_done
+
+    ; Check for Label Definition (Ends with :)
+    lea rdi, [token_buffer]
+    mov rcx, rax ; length
+    cmp byte [rdi + rcx - 1], ':'
+    je .handle_label_def
 
     ; Hash the token
     lea rdi, [token_buffer]
@@ -125,9 +138,16 @@ start:
     cmp rdx, rcx
     je .skip_padding
     lodsb
+
+    cmp qword [pass_count], 2
+    jne .skip_write_op
+
     mov rbx, [output_ptr]
     mov [rbx], al
     inc qword [output_ptr]
+
+.skip_write_op:
+    inc qword [current_offset]
     inc rdx
     jmp .write_opcode
 
@@ -211,9 +231,16 @@ start:
 
 .write_modrm:
     mov rax, rbx
+
+    cmp qword [pass_count], 2
+    jne .skip_write_modrm
+
     mov rbx, [output_ptr]
     mov [rbx], al
     inc qword [output_ptr]
+
+.skip_write_modrm:
+    inc qword [current_offset]
 
 .check_immediates:
     ; Check r12 (Flags)
@@ -239,9 +266,16 @@ start:
 
 .do_parse_imm8:
     call parse_int
+
+    cmp qword [pass_count], 2
+    jne .skip_write_imm8
+
     mov rbx, [output_ptr]
     mov [rbx], al ; Store byte
     inc qword [output_ptr]
+
+.skip_write_imm8:
+    inc qword [current_offset]
     jmp .assemble_loop
 
 .parse_imm32:
@@ -253,11 +287,126 @@ start:
     call get_token
 
 .do_parse_imm32:
+    ; Check if it is a label (symbol)
+    ; Try parsing int first. If it returns valid, use it.
+    ; But our parse_int is naive.
+    ; Let's check first char. If digit or -, int. If char, symbol.
+    lea rsi, [token_buffer]
+    mov al, [rsi]
+    cmp al, '-'
+    je .is_int
+    cmp al, '0'
+    jb .is_symbol
+    cmp al, '9'
+    ja .is_symbol
+
+.is_int:
     call parse_int
+    jmp .write_imm32
+
+.is_symbol:
+    ; Symbol Reference (Label)
+    ; Only resolve in Pass 2
+    cmp qword [pass_count], 2
+    jne .mock_imm32
+
+    ; Hash symbol
+    lea rdi, [token_buffer]
+    call strlen
+    mov rsi, rax
+    lea rdi, [token_buffer]
+    call fnv1a_hash
+
+    call find_symbol
+    cmp rcx, 0
+    je .symbol_not_found
+
+    ; Calculate Relative Offset
+    ; Target (rbx) - (Current (current_offset) + 4)
+    ; But wait, current_offset is at START of imm32.
+    ; So instruction ends at current_offset + 4.
+    ; Offset = Target - (current_offset + 4)
+
+    sub rbx, [current_offset]
+    sub rbx, 4
+    mov rax, rbx
+    jmp .write_imm32
+
+.mock_imm32:
+    xor rax, rax
+
+.write_imm32:
+    cmp qword [pass_count], 2
+    jne .skip_write_imm32
+
     mov rbx, [output_ptr]
-    mov [rbx], eax ; Store 4 bytes (eax)
+    mov [rbx], eax ; Store 4 bytes
     add qword [output_ptr], 4
+
+.skip_write_imm32:
+    add qword [current_offset], 4
     jmp .assemble_loop
+
+.symbol_not_found:
+    ; Error
+    mov rax, sys_write
+    mov rdi, 1
+    lea rsi, [msg_err] ; Reuse err
+    mov rdx, 16
+    syscall
+
+    ; Print the token that failed
+    lea rdi, [token_buffer]
+    call strlen
+    mov rdx, rax
+    lea rsi, [token_buffer]
+    mov rax, sys_write
+    mov rdi, 1
+    syscall
+
+    mov rax, sys_write
+    mov rdi, 1
+    lea rsi, [newline]
+    mov rdx, 1
+    syscall
+
+    jmp exit
+
+.handle_label_def:
+    ; Pass 1: Add to symbol table
+    cmp qword [pass_count], 1
+    jne .assemble_loop
+
+    ; Remove colon
+    mov byte [rdi + rcx - 1], 0
+    dec rcx
+
+    ; Hash
+    mov rsi, rcx
+    call fnv1a_hash
+
+    ; Add Symbol (Offset = current_offset)
+    mov rbx, [current_offset]
+    call add_symbol
+    jmp .assemble_loop
+
+.pass_done:
+    cmp qword [pass_count], 1
+    jne .finish
+
+    ; Start Pass 2
+    inc qword [pass_count]
+
+    ; Reset Source Ptr (Need to store start_ptr)
+    mov rax, [start_ptr]
+    mov [source_ptr], rax
+
+    ; Reset Output Ptr (Rewind to after header)
+    lea rax, [output_buffer]
+    add rax, 8
+    mov [output_ptr], rax
+
+    jmp .pass_start
 
 .unknown_token:
     mov rax, sys_write
@@ -357,6 +506,45 @@ exit:
     syscall
 
 ; --- ROUTINES ---
+
+add_symbol:
+    ; Input: rax (hash), rbx (offset)
+    ; Output: None
+    mov rcx, [symbol_count]
+    mov rdx, rcx
+    shl rdx, 4 ; * 16 (8 byte hash + 8 byte offset)
+    lea rdi, [symbol_table + rdx]
+    mov [rdi], rax
+    mov [rdi + 8], rbx
+    inc qword [symbol_count]
+    ret
+
+find_symbol:
+    ; Input: rax (hash)
+    ; Output: rbx (offset), rcx (found=1/0)
+    mov rcx, [symbol_count]
+    lea rdi, [symbol_table]
+    xor rdx, rdx
+.loop_find:
+    cmp rdx, rcx
+    je .not_found_sym
+
+    cmp [rdi], rax
+    je .found_sym
+
+    add rdi, 16
+    inc rdx
+    jmp .loop_find
+
+.found_sym:
+    mov rbx, [rdi + 8]
+    mov rcx, 1
+    ret
+
+.not_found_sym:
+    xor rbx, rbx
+    xor rcx, rcx
+    ret
 
 get_token:
     ; Output: token_buffer filled, rax = length
@@ -625,6 +813,7 @@ input_filename dq 0
 input_fd dq 0
 input_size dq 0
 source_ptr dq 0
+start_ptr dq 0
 source_end dq 0
 output_ptr dq 0
 output_fd dq 0
@@ -642,5 +831,9 @@ stat_buf:
 segment readable writeable
 output_buffer: rb 1048576 ; 1MB
 token_buffer: rb 256
+symbol_table: rb 16384 ; Symbol Table (Hash, Offset) * 1024 entries
+symbol_count: dq 0
+pass_count: dq 0
+current_offset: dq 0
 
 include '../brainlib/vzoel_table.fox'

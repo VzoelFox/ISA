@@ -2021,7 +2021,7 @@ vzoel_entry_jbe_rel32:
 
 vzoel_entry_je_rel32:
     db 'je.rel32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
+    db 8 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 2 ; Opcode Len
     db 15, 132, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
@@ -2187,7 +2187,7 @@ vzoel_entry_jle_rel32:
 
 vzoel_entry_jmp_rel32:
     db 'jmp.rel32', 0
-    db 0 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
+    db 8 ; Flags (1=REX.W, 2=RegInOp, 4=Imm8, 8=Imm32)
     db 1 ; Opcode Len
     db 233, 0, 0 ; Opcode Bytes (Max 3)
     db 0 ; ModRM Type (1=rm,reg)
