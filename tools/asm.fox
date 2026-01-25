@@ -284,14 +284,20 @@ start:
     or r13, 0x100 ; Flag bit 8 of r13 (REX/Flags) to indicate SIB present
 
 .no_sib_2:
-    or rbx, rcx ; OR RM
-    jmp .write_modrm
+    jmp .modrm_mem_2_finish
 
 .mod_reg_2:
     or rbx, 0xC0 ; Mod=11
     mov rcx, r9
     and rcx, 7
     or rbx, rcx ; OR RM
+    jmp .write_modrm
+
+.modrm_mem_2_finish:
+    mov rax, [mod_type]
+    shl rax, 6
+    or rbx, rax
+    or rbx, rcx
     jmp .write_modrm
 
 .modrm_rm_reg:
@@ -328,7 +334,13 @@ start:
     or r13, 0x100 ; SIB flag
 
 .no_sib_1:
-    or rbx, rcx ; OR RM
+    jmp .modrm_mem_1_finish
+
+.modrm_mem_1_finish:
+    mov rax, [mod_type]
+    shl rax, 6
+    or rbx, rax
+    or rbx, rcx
     jmp .write_modrm
 
 .mod_reg_1:
@@ -375,6 +387,12 @@ start:
     or r13, 0x100
 
 .no_sib_ext:
+    jmp .modrm_mem_ext_finish
+
+.modrm_mem_ext_finish:
+    mov rax, [mod_type]
+    shl rax, 6
+    or rbx, rax
     or rbx, rcx
     jmp .write_modrm
 
@@ -453,6 +471,41 @@ start:
     inc qword [current_offset]
 
 .no_sib_byte:
+
+    ; 5. Write Displacement (if mod_type > 0)
+    mov rax, [mod_type]
+    cmp rax, 0
+    je .no_disp_byte
+
+    cmp rax, 1
+    je .write_disp8
+
+    ; Disp32
+    cmp qword [pass_count], 2
+    jne .skip_write_disp32
+
+    mov rax, [displacement_val]
+    mov rbx, [output_ptr]
+    mov [rbx], eax
+    add qword [output_ptr], 4
+
+.skip_write_disp32:
+    add qword [current_offset], 4
+    jmp .no_disp_byte
+
+.write_disp8:
+    cmp qword [pass_count], 2
+    jne .skip_write_disp8
+
+    mov rax, [displacement_val]
+    mov rbx, [output_ptr]
+    mov [rbx], al
+    inc qword [output_ptr]
+
+.skip_write_disp8:
+    inc qword [current_offset]
+
+.no_disp_byte:
 
 .check_immediates:
     ; Check r12 (Flags)
@@ -1073,7 +1126,58 @@ parse_register:
     ; Wait, the labels below use offsets from rdi.
     ; So yes, updating rdi is enough.
 
+    ; Displacement Logic
+    push rdi
+    call find_plus_minus
+    pop rdi
+
+    cmp rax, 0
+    je .no_disp
+
+    ; Found displacement at [rax]
+    mov bl, [rax] ; Save sign (+ or -)
+    mov byte [rax], 0 ; Terminate register string
+
+    inc rax ; Point to digits
+
+    push rdi ; Save register string ptr
+    push rbx ; Save sign
+
+    ; Parse int from rax
+    ; We need a parse_int that takes RSI as input.
+    ; My parse_int takes token_buffer hardcoded.
+    ; I need to update parse_int to use RSI.
+    ; Or copy to temp buffer? RSI is better.
+
+    mov rsi, rax
+    call parse_int_rsi ; New/Modified function
+
+    pop rbx ; Restore sign
+    pop rdi ; Restore register string ptr
+
+    cmp bl, '-'
+    jne .disp_pos
+    neg rax
+.disp_pos:
+    mov [displacement_val], rax
+
+    ; Determine Mod Type
+    ; Check if fits in Disp8 (-128 to 127)
+    cmp rax, -128
+    jl .mod_disp32
+    cmp rax, 127
+    jg .mod_disp32
+
+    mov qword [mod_type], 1 ; Mod01 (Disp8)
     jmp .check_reg_char
+
+.mod_disp32:
+    mov qword [mod_type], 2 ; Mod10 (Disp32)
+    jmp .check_reg_char
+
+.no_disp:
+    mov qword [mod_type], 0
+    mov qword [displacement_val], 0
 
 .check_reg_char:
     cmp byte [rdi], 'r'
@@ -1175,10 +1279,35 @@ parse_register:
     mov rax, -1
     ret
 
+find_plus_minus:
+    ; Input: rdi (string)
+    ; Output: rax (pointer to char or 0)
+    mov rax, rdi
+.fpm_loop:
+    mov cl, [rax]
+    cmp cl, 0
+    je .fpm_not_found
+    cmp cl, '+'
+    je .fpm_found
+    cmp cl, '-'
+    je .fpm_found
+    inc rax
+    jmp .fpm_loop
+.fpm_found:
+    ret
+.fpm_not_found:
+    xor rax, rax
+    ret
+
 parse_int:
     ; Input: token_buffer
     ; Output: rax = integer value
     lea rsi, [token_buffer]
+    jmp parse_int_rsi
+
+parse_int_rsi:
+    ; Input: rsi (string ptr)
+    ; Output: rax
     xor rax, rax
     xor rcx, rcx
 
@@ -1330,5 +1459,7 @@ pass_count: dq 0
 current_offset: dq 0
 opcode_buf: rb 4
 opcode_len: dq 0
+displacement_val: dq 0
+mod_type: dq 0 ; 0=Mod00, 1=Mod01(Disp8), 2=Mod10(Disp32)
 
 include '../brainlib/vzoel_table.fox'
