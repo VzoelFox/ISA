@@ -109,6 +109,14 @@ start:
     cmp rbx, 1
     je .assemble_loop
 
+    ; Check for Structure Keywords
+    push rax
+    call try_parse_structure
+    mov rbx, rax
+    pop rax
+    cmp rbx, 1
+    je .assemble_loop
+
     ; Hash the token
     lea rdi, [token_buffer]
     mov rsi, rax
@@ -1097,6 +1105,469 @@ try_parse_directive:
     mov rax, 1
     ret
 
+try_parse_structure:
+    lea rdi, [token_buffer]
+
+    mov rsi, str_jika
+    call strcmp
+    test rax, rax
+    jnz .handle_jika
+
+    mov rsi, str_selama
+    call strcmp
+    test rax, rax
+    jnz .handle_selama
+
+    mov rsi, str_lain
+    call strcmp
+    test rax, rax
+    jnz .handle_lain
+
+    mov rsi, str_akhir
+    call strcmp
+    test rax, rax
+    jnz .handle_akhir
+
+    mov rsi, str_fungsi
+    call strcmp
+    test rax, rax
+    jnz .handle_fungsi
+
+    mov rsi, str_kembali
+    call strcmp
+    test rax, rax
+    jnz .handle_kembali
+
+    mov rax, 0
+    ret
+
+.handle_jika:
+    call get_scope_id
+    mov r15, rax
+
+    mov rdi, 1 ; IF
+    mov rsi, r15
+    call push_scope
+
+    call get_token
+    lea rdi, [token_buffer]
+    call map_condition_inverse
+    mov r14, rax
+
+    call get_token ; maka
+
+    lea rdi, [token_buffer]
+    mov rsi, r15
+    call construct_label_if_else
+
+    mov rdi, r14
+    lea rsi, [token_buffer]
+    call emit_jcc
+
+    mov rax, 1
+    ret
+
+.handle_selama:
+    call get_scope_id
+    mov r15, rax
+
+    mov rdi, 2 ; WHILE
+    mov rsi, r15
+    call push_scope
+
+    lea rdi, [token_buffer]
+    mov rsi, r15
+    call construct_label_while_start
+    lea rdi, [token_buffer]
+    call define_label
+
+    call get_token
+    lea rdi, [token_buffer]
+    call map_condition_inverse
+    mov r14, rax
+
+    call get_token ; lakukan
+
+    lea rdi, [token_buffer]
+    mov rsi, r15
+    call construct_label_while_end
+
+    mov rdi, r14
+    lea rsi, [token_buffer]
+    call emit_jcc
+
+    mov rax, 1
+    ret
+
+.handle_lain:
+    call peek_scope
+    cmp rax, 1
+    jne .err_structure
+    mov r15, rbx
+
+    lea rdi, [token_buffer]
+    mov rsi, r15
+    call construct_label_if_end
+    lea rsi, [token_buffer]
+    call emit_jmp
+
+    lea rdi, [token_buffer]
+    mov rsi, r15
+    call construct_label_if_else
+    lea rdi, [token_buffer]
+    call define_label
+
+    call set_scope_else_flag
+    mov rax, 1
+    ret
+
+.handle_akhir:
+    call pop_scope
+    cmp rax, 1
+    je .akhir_if
+    cmp rax, 2
+    je .akhir_while
+    cmp rax, 3
+    je .akhir_func
+    jmp .err_structure
+
+.akhir_if:
+    cmp rcx, 1
+    je .akhir_if_has_else
+    lea rdi, [token_buffer]
+    mov rsi, rbx
+    call construct_label_if_else
+    lea rdi, [token_buffer]
+    call define_label
+    jmp .akhir_done
+.akhir_if_has_else:
+    lea rdi, [token_buffer]
+    mov rsi, rbx
+    call construct_label_if_end
+    lea rdi, [token_buffer]
+    call define_label
+    jmp .akhir_done
+
+.akhir_while:
+    lea rdi, [token_buffer]
+    mov rsi, rbx
+    call construct_label_while_start
+    lea rsi, [token_buffer]
+    call emit_jmp
+    lea rdi, [token_buffer]
+    mov rsi, rbx
+    call construct_label_while_end
+    lea rdi, [token_buffer]
+    call define_label
+    jmp .akhir_done
+
+.akhir_func:
+    mov al, 0xC9
+    call emit_byte
+    mov al, 0xC3
+    call emit_byte
+    jmp .akhir_done
+
+.akhir_done:
+    mov rax, 1
+    ret
+
+.handle_fungsi:
+    call get_token
+    lea rdi, [token_buffer]
+    call define_label
+    mov rdi, 3
+    mov rsi, 0
+    call push_scope
+    mov al, 0x55
+    call emit_byte
+    mov al, 0x48
+    call emit_byte
+    mov al, 0x89
+    call emit_byte
+    mov al, 0xE5
+    call emit_byte
+    mov rax, 1
+    ret
+
+.handle_kembali:
+    mov al, 0xC9
+    call emit_byte
+    mov al, 0xC3
+    call emit_byte
+    mov rax, 1
+    ret
+
+.err_structure:
+    mov rax, sys_write
+    mov rdi, 1
+    lea rsi, [msg_err]
+    mov rdx, 16
+    syscall
+    jmp exit
+
+; --- Structure Helpers ---
+
+get_scope_id:
+    mov rax, [next_label_id]
+    inc qword [next_label_id]
+    ret
+
+push_scope:
+    ; rdi=Type, rsi=ID
+    mov rax, [stack_top]
+    lea rbx, [control_stack + rax]
+    mov [rbx], rdi
+    mov [rbx+8], rsi
+    mov qword [rbx+16], 0 ; Flags
+    add qword [stack_top], 24
+    ret
+
+pop_scope:
+    ; Returns rax=Type, rbx=ID, rcx=Flags
+    mov rax, [stack_top]
+    sub rax, 24
+    mov [stack_top], rax
+    lea rdx, [control_stack + rax]
+    mov rax, [rdx]
+    mov rbx, [rdx+8]
+    mov rcx, [rdx+16]
+    ret
+
+peek_scope:
+    mov rax, [stack_top]
+    sub rax, 24
+    lea rdx, [control_stack + rax]
+    mov rax, [rdx]
+    mov rbx, [rdx+8]
+    mov rcx, [rdx+16]
+    ret
+
+set_scope_else_flag:
+    mov rax, [stack_top]
+    sub rax, 24
+    lea rdx, [control_stack + rax]
+    mov qword [rdx+16], 1
+    ret
+
+emit_byte:
+    ; al = byte
+    cmp qword [pass_count], 2
+    jne .emit_byte_skip
+    push rax
+    call check_buffer_overflow
+    pop rax
+    mov rbx, [output_ptr]
+    mov [rbx], al
+    inc qword [output_ptr]
+.emit_byte_skip:
+    inc qword [current_offset]
+    ret
+
+emit_jcc:
+    ; rdi = opcode (e.g. 0x84), rsi = label string
+    mov al, 0x0F
+    call emit_byte
+    mov rax, rdi
+    call emit_byte
+    ; Rel32
+    jmp emit_rel32_label
+
+emit_jmp:
+    ; rsi = label string
+    mov al, 0xE9
+    call emit_byte
+    jmp emit_rel32_label
+
+emit_rel32_label:
+    ; rsi = label string
+    cmp qword [pass_count], 2
+    jne .skip_rel32
+
+    push rsi
+    mov rdi, rsi
+    call strlen
+    mov rsi, rax
+    pop rdi
+    push rdi
+    call fnv1a_hash
+    call find_symbol
+    pop rdi
+
+    cmp rcx, 0
+    je .rel32_not_found
+
+    ; Calc offset: Target(rbx) - (Current + 4)
+    ; current_offset is updated by emit_byte calls BEFORE this.
+    ; So current_offset points to start of rel32.
+    ; Instruction ends at current_offset + 4.
+    sub rbx, [current_offset]
+    sub rbx, 4
+    mov rax, rbx
+    jmp .write_rel32
+
+.rel32_not_found:
+    xor rax, rax
+
+.write_rel32:
+    push rax
+    call check_buffer_overflow
+    pop rax
+    mov rbx, [output_ptr]
+    mov [rbx], eax
+    add qword [output_ptr], 4
+
+.skip_rel32:
+    add qword [current_offset], 4
+    ret
+
+define_label:
+    ; rdi = label string
+    cmp qword [pass_count], 1
+    jne .def_skip
+    push rdi
+    call strlen
+    mov rsi, rax
+    pop rdi
+    call fnv1a_hash
+    mov rbx, [current_offset]
+    call add_symbol
+.def_skip:
+    ret
+
+map_condition_inverse:
+    ; rdi = string (eq, ne...)
+    ; Returns opcode (0x85 for eq->jne)
+    mov al, [rdi]
+    cmp al, 'e' ; eq
+    je .cond_eq
+    cmp al, 'n' ; ne
+    je .cond_ne
+    cmp al, 'l' ; lt, le
+    je .cond_l
+    cmp al, 'g' ; gt, ge
+    je .cond_g
+    xor rax, rax
+    ret
+.cond_eq: mov rax, 0x85 ; jne
+    ret
+.cond_ne: mov rax, 0x84 ; je
+    ret
+.cond_l:
+    cmp byte [rdi+1], 'e'
+    je .cond_le
+    mov rax, 0x8D ; lt->jge
+    ret
+.cond_le: mov rax, 0x8F ; le->jg
+    ret
+.cond_g:
+    cmp byte [rdi+1], 'e'
+    je .cond_ge
+    mov rax, 0x8E ; gt->jle
+    ret
+.cond_ge: mov rax, 0x8C ; ge->jl
+    ret
+
+construct_label_if_else:
+    ; rdi=buf, rsi=id
+    mov byte [rdi], '.'
+    mov byte [rdi+1], 'L'
+    mov byte [rdi+2], 'I'
+    mov byte [rdi+3], 'F'
+    add rdi, 4
+    call int_to_str_buf
+    mov byte [rdi], 'E'
+    mov byte [rdi+1], 'L'
+    mov byte [rdi+2], 'S'
+    mov byte [rdi+3], 'E'
+    mov byte [rdi+4], 0
+    ret
+
+construct_label_if_end:
+    mov byte [rdi], '.'
+    mov byte [rdi+1], 'L'
+    mov byte [rdi+2], 'I'
+    mov byte [rdi+3], 'F'
+    add rdi, 4
+    call int_to_str_buf
+    mov byte [rdi], 'E'
+    mov byte [rdi+1], 'N'
+    mov byte [rdi+2], 'D'
+    mov byte [rdi+3], 0
+    ret
+
+construct_label_while_start:
+    mov byte [rdi], '.'
+    mov byte [rdi+1], 'L'
+    mov byte [rdi+2], 'W'
+    mov byte [rdi+3], 'S'
+    add rdi, 4
+    call int_to_str_buf
+    mov byte [rdi], 0
+    ret
+
+construct_label_while_end:
+    mov byte [rdi], '.'
+    mov byte [rdi+1], 'L'
+    mov byte [rdi+2], 'W'
+    mov byte [rdi+3], 'E'
+    add rdi, 4
+    call int_to_str_buf
+    mov byte [rdi], 0
+    ret
+
+int_to_str_buf:
+    ; rsi = int, rdi = buffer
+    ; Writes int to buffer, advances rdi
+    push rbx
+    push rcx
+    push rdx
+
+    mov rax, rsi
+    mov rcx, 10
+    mov rbx, rdi ; Start
+
+    ; If 0
+    cmp rax, 0
+    jne .its_loop
+    mov byte [rdi], '0'
+    inc rdi
+    pop rdx
+    pop rcx
+    pop rbx
+    ret
+
+.its_loop:
+    xor rdx, rdx
+    div rcx
+    add dl, '0'
+    mov [rdi], dl
+    inc rdi
+    cmp rax, 0
+    jne .its_loop
+
+    ; Reverse
+    mov rcx, rdi
+    dec rcx ; End
+    mov rsi, rbx ; Start
+
+.rev_loop:
+    cmp rsi, rcx
+    jae .rev_done
+    mov al, [rsi]
+    mov dl, [rcx]
+    mov [rsi], dl
+    mov [rcx], al
+    inc rsi
+    dec rcx
+    jmp .rev_loop
+
+.rev_done:
+    pop rdx
+    pop rcx
+    pop rbx
+    ret
+
 try_parse_label:
     ; Input: token_buffer, rax (token length)
     ; Output: rax=1 if label handled, 0 if not
@@ -1714,6 +2185,7 @@ lookup_instruction:
     ret
 
 ; --- DATA ---
+segment readable writeable
 input_filename dq 0
 input_fd dq 0
 input_size dq 0
@@ -1750,9 +2222,15 @@ str_rb db "rb", 0
 stat_buf:
     rb 144
 
-segment readable writeable
-output_buffer: rb 4194304 ; 4MB
-token_buffer: rb 256
+str_jika db "jika", 0
+str_maka db "maka", 0
+str_lain db "lain", 0
+str_akhir db "akhir", 0
+str_selama db "selama", 0
+str_lakukan db "lakukan", 0
+str_fungsi db "fungsi", 0
+str_kembali db "kembali", 0
+
 symbol_table: rb 16384 ; Symbol Table (Hash, Offset) * 1024 entries
 symbol_count: dq 0
 pass_count: dq 0
@@ -1761,5 +2239,11 @@ opcode_buf: rb 4
 opcode_len: dq 0
 displacement_val: dq 0
 mod_type: dq 0 ; 0=Mod00, 1=Mod01(Disp8), 2=Mod10(Disp32)
+
+output_buffer: rb 1048576 ; 1MB
+control_stack: rb 16384 ; 1024 entries * 16 bytes (Type, ID)
+stack_top: dq 0
+next_label_id: dq 0
+token_buffer: rb 256
 
 include '../brainlib/vzoel_table.fox'
