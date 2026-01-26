@@ -574,7 +574,71 @@ start:
 
 .is_int:
     call parse_int
-    jmp .write_imm32
+    ; Optimization Check: 0x81 (Imm32) -> 0x83 (Imm8)
+    ; Check if opcode is 0x81
+    lea rdi, [opcode_buf]
+    cmp byte [rdi], 0x81
+    jne .write_imm32
+
+    ; Check if value fits in 8 bits (-128 to 127)
+    cmp rax, -128
+    jl .write_imm32
+    cmp rax, 127
+    jg .write_imm32
+
+    ; Optimize!
+    ; In Pass 2, we must patch the previously written opcode (0x81 -> 0x83)
+    cmp qword [pass_count], 2
+    jne .skip_patch_opcode
+
+    push rax ; Save Immediate
+    push rdi ; Save Opcode Buf ptr
+
+    ; Backtrack output_ptr to find opcode
+    mov rbx, [output_ptr]
+    sub rbx, 1 ; ModRM (Always present for 0x81)
+
+    ; Check SIB (Bit 8 of r13)
+    test r13, 0x100
+    jz .opt_no_sib
+    sub rbx, 1
+.opt_no_sib:
+
+    ; Check Disp
+    mov rcx, [mod_type]
+    cmp rcx, 1
+    je .opt_disp8
+    cmp rcx, 2
+    je .opt_disp32
+    jmp .opt_do_patch
+
+.opt_disp8:
+    sub rbx, 1
+    jmp .opt_do_patch
+.opt_disp32:
+    sub rbx, 4
+
+.opt_do_patch:
+    sub rbx, 1 ; Opcode byte (0x81)
+    mov byte [rbx], 0x83 ; Patch to 0x83
+
+    pop rdi
+    pop rax
+
+.skip_patch_opcode:
+
+    ; Write Imm8
+    cmp qword [pass_count], 2
+    jne .skip_write_opt_imm8
+
+    call check_buffer_overflow
+    mov rbx, [output_ptr]
+    mov [rbx], al
+    inc qword [output_ptr]
+
+.skip_write_opt_imm8:
+    inc qword [current_offset]
+    jmp .assemble_loop
 
 .is_symbol:
     ; Symbol Reference (Label)

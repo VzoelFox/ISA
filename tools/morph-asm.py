@@ -162,6 +162,14 @@ class InstructionDef:
                 if not isinstance(op, Register) or op.width != 8: return False
             elif sig == 'mem':
                 if not isinstance(op, Memory): return False
+                # strict size check if prefix exists
+                if op.width_prefix:
+                    # 8-bit
+                    if op.width_prefix == 8:
+                        if self.rex == 'W': return False
+                    # 64-bit
+                    elif op.width_prefix == 64:
+                        if self.rex != 'W': return False
             elif sig.startswith('imm'):
                 if not isinstance(op, Immediate): return False
                 val = op.value
