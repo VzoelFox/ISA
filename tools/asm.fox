@@ -62,8 +62,8 @@ start:
     mov r9, 0
     syscall
 
-    cmp rax, -1
-    je error_mmap
+    cmp rax, 0
+    jl error_mmap
     mov [source_ptr], rax
     mov [start_ptr], rax ; Save start for rewind
 
@@ -777,12 +777,12 @@ exit:
 ; --- ROUTINES ---
 
 check_buffer_overflow:
-    ; Check if output_ptr >= output_buffer + 1048576 - 8 (Safety margin for multibyte writes)
+    ; Check if output_ptr >= output_buffer + 4194304 - 8 (Safety margin for multibyte writes)
     push rax
     push rbx
     mov rax, [output_ptr]
     lea rbx, [output_buffer]
-    add rbx, 1048568
+    add rbx, 4194296
     cmp rax, rbx
     jae .overflow
     pop rbx
@@ -1687,7 +1687,7 @@ stat_buf:
     rb 144
 
 segment readable writeable
-output_buffer: rb 1048576 ; 1MB
+output_buffer: rb 4194304 ; 4MB
 token_buffer: rb 256
 symbol_table: rb 16384 ; Symbol Table (Hash, Offset) * 1024 entries
 symbol_count: dq 0
