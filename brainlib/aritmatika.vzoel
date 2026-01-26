@@ -7,6 +7,7 @@ add.mem.r64         rex=W opcode=0x01 modrm=mem,reg ; [AI_HINT: Tambah memori de
 add.r64.imm8        rex=W opcode=0x83 modrm=0 imm8  ; [AI_HINT: Tambah register dengan angka 8-bit (+)]
 add.mem.imm8        rex=W opcode=0x83 modrm=0 imm8  ; [AI_HINT: Tambah memori dengan angka 8-bit (+)]
 add.r64.imm32       rex=W opcode=0x81 modrm=0 imm32 ; [AI_HINT: Tambah register dengan angka 32-bit (+)]
+add                 rex=W opcode=0x81 modrm=0 imm32 ; [AI_HINT: Alias Optimasi Add]
 add.mem.imm32       rex=W opcode=0x81 modrm=0 imm32 ; [AI_HINT: Tambah memori dengan angka 32-bit (+)]
 
 add.r8.r8           opcode=0x00 modrm=rm,reg        ; [AI_HINT: Tambah register 8-bit dengan register 8-bit (+)]
@@ -22,6 +23,7 @@ adc.mem.r64         rex=W opcode=0x11 modrm=mem,reg ; [AI_HINT: Tambah dengan Ca
 adc.r64.imm8        rex=W opcode=0x83 modrm=2 imm8  ; [AI_HINT: Tambah dengan Carry immediate 8-bit]
 adc.mem.imm8        rex=W opcode=0x83 modrm=2 imm8  ; [AI_HINT: Tambah dengan Carry memori immediate 8-bit]
 adc.r64.imm32       rex=W opcode=0x81 modrm=2 imm32 ; [AI_HINT: Tambah dengan Carry immediate 32-bit]
+adc                 rex=W opcode=0x81 modrm=2 imm32 ; [AI_HINT: Alias Optimasi Adc]
 adc.mem.imm32       rex=W opcode=0x81 modrm=2 imm32 ; [AI_HINT: Tambah dengan Carry memori immediate 32-bit]
 
 adc.r8.r8           opcode=0x10 modrm=rm,reg        ; [AI_HINT: Tambah dengan Carry 8-bit]
@@ -34,6 +36,7 @@ sub.mem.r64         rex=W opcode=0x29 modrm=mem,reg ; [AI_HINT: Kurang memori de
 sub.r64.imm8        rex=W opcode=0x83 modrm=5 imm8  ; [AI_HINT: Kurang register dengan angka 8-bit (-)]
 sub.mem.imm8        rex=W opcode=0x83 modrm=5 imm8  ; [AI_HINT: Kurang memori dengan angka 8-bit (-)]
 sub.r64.imm32       rex=W opcode=0x81 modrm=5 imm32 ; [AI_HINT: Kurang register dengan angka 32-bit (-)]
+sub                 rex=W opcode=0x81 modrm=5 imm32 ; [AI_HINT: Alias Optimasi Sub]
 sub.mem.imm32       rex=W opcode=0x81 modrm=5 imm32 ; [AI_HINT: Kurang memori dengan angka 32-bit (-)]
 
 sub.r8.r8           opcode=0x28 modrm=rm,reg        ; [AI_HINT: Kurang register 8-bit (-)]
@@ -47,6 +50,7 @@ sbb.mem.r64         rex=W opcode=0x19 modrm=mem,reg ; [AI_HINT: Kurang dengan Bo
 sbb.r64.imm8        rex=W opcode=0x83 modrm=3 imm8  ; [AI_HINT: Kurang dengan Borrow immediate 8-bit]
 sbb.mem.imm8        rex=W opcode=0x83 modrm=3 imm8  ; [AI_HINT: Kurang dengan Borrow memori immediate 8-bit]
 sbb.r64.imm32       rex=W opcode=0x81 modrm=3 imm32 ; [AI_HINT: Kurang dengan Borrow immediate 32-bit]
+sbb                 rex=W opcode=0x81 modrm=3 imm32 ; [AI_HINT: Alias Optimasi Sbb]
 sbb.mem.imm32       rex=W opcode=0x81 modrm=3 imm32 ; [AI_HINT: Kurang dengan Borrow memori immediate 32-bit]
 
 sbb.r8.r8           opcode=0x18 modrm=rm,reg        ; [AI_HINT: Kurang dengan Borrow 8-bit]

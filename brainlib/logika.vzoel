@@ -7,6 +7,7 @@ and.mem.r64         rex=W opcode=0x21 modrm=mem,reg ; [AI_HINT: Logika AND bitwi
 and.r64.imm8        rex=W opcode=0x83 modrm=4 imm8  ; [AI_HINT: Logika AND bitwise register dengan angka 8-bit (&)]
 and.mem.imm8        rex=W opcode=0x83 modrm=4 imm8  ; [AI_HINT: Logika AND bitwise memori dengan angka 8-bit (&)]
 and.r64.imm32       rex=W opcode=0x81 modrm=4 imm32 ; [AI_HINT: Logika AND bitwise register dengan angka 32-bit (&)]
+and                 rex=W opcode=0x81 modrm=4 imm32 ; [AI_HINT: Alias Optimasi And]
 and.mem.imm32       rex=W opcode=0x81 modrm=4 imm32 ; [AI_HINT: Logika AND bitwise memori dengan angka 32-bit (&)]
 
 and.r8.r8           opcode=0x20 modrm=rm,reg        ; [AI_HINT: Logika AND bitwise register 8-bit (&)]
@@ -20,6 +21,7 @@ or.mem.r64          rex=W opcode=0x09 modrm=mem,reg ; [AI_HINT: Logika OR bitwis
 or.r64.imm8         rex=W opcode=0x83 modrm=1 imm8  ; [AI_HINT: Logika OR bitwise register dengan angka 8-bit (|)]
 or.mem.imm8         rex=W opcode=0x83 modrm=1 imm8  ; [AI_HINT: Logika OR bitwise memori dengan angka 8-bit (|)]
 or.r64.imm32        rex=W opcode=0x81 modrm=1 imm32 ; [AI_HINT: Logika OR bitwise register dengan angka 32-bit (|)]
+or                  rex=W opcode=0x81 modrm=1 imm32 ; [AI_HINT: Alias Optimasi Or]
 or.mem.imm32        rex=W opcode=0x81 modrm=1 imm32 ; [AI_HINT: Logika OR bitwise memori dengan angka 32-bit (|)]
 
 or.r8.r8            opcode=0x08 modrm=rm,reg        ; [AI_HINT: Logika OR bitwise register 8-bit (|)]
@@ -33,6 +35,7 @@ xor.mem.r64         rex=W opcode=0x31 modrm=mem,reg ; [AI_HINT: Logika XOR bitwi
 xor.r64.imm8        rex=W opcode=0x83 modrm=6 imm8  ; [AI_HINT: Logika XOR bitwise register dengan angka 8-bit (^)]
 xor.mem.imm8        rex=W opcode=0x83 modrm=6 imm8  ; [AI_HINT: Logika XOR bitwise memori dengan angka 8-bit (^)]
 xor.r64.imm32       rex=W opcode=0x81 modrm=6 imm32 ; [AI_HINT: Logika XOR bitwise register dengan angka 32-bit (^)]
+xor                 rex=W opcode=0x81 modrm=6 imm32 ; [AI_HINT: Alias Optimasi Xor]
 xor.mem.imm32       rex=W opcode=0x81 modrm=6 imm32 ; [AI_HINT: Logika XOR bitwise memori dengan angka 32-bit (^)]
 
 xor.r8.r8           opcode=0x30 modrm=rm,reg        ; [AI_HINT: Logika XOR bitwise register 8-bit (^)]
