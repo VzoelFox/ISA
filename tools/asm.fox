@@ -849,12 +849,12 @@ exit:
 ; --- ROUTINES ---
 
 check_buffer_overflow:
-    ; Check if output_ptr >= output_buffer + 4194304 - 8 (Safety margin for multibyte writes)
+    ; Check if output_ptr >= output_buffer + 1048576 - 8 (Safety margin for multibyte writes)
     push rax
     push rbx
     mov rax, [output_ptr]
     lea rbx, [output_buffer]
-    add rbx, 4194296
+    add rbx, 1048568
     cmp rax, rbx
     jae .overflow
     pop rbx
@@ -2231,6 +2231,7 @@ str_lakukan db "lakukan", 0
 str_fungsi db "fungsi", 0
 str_kembali db "kembali", 0
 
+token_buffer: rb 256
 symbol_table: rb 16384 ; Symbol Table (Hash, Offset) * 1024 entries
 symbol_count: dq 0
 pass_count: dq 0
@@ -2240,10 +2241,10 @@ opcode_len: dq 0
 displacement_val: dq 0
 mod_type: dq 0 ; 0=Mod00, 1=Mod01(Disp8), 2=Mod10(Disp32)
 
-output_buffer: rb 1048576 ; 1MB
 control_stack: rb 16384 ; 1024 entries * 16 bytes (Type, ID)
 stack_top: dq 0
 next_label_id: dq 0
-token_buffer: rb 256
 
 include '../brainlib/vzoel_table.fox'
+
+output_buffer: rb 1048576 ; 1MB
