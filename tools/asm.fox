@@ -71,8 +71,19 @@ start:
     add rax, [input_size]
     mov [source_end], rax
 
-    ; Initialize Output Pointer
-    lea rax, [output_buffer]
+    ; Allocate Output Buffer (1MB)
+    mov rax, sys_mmap
+    mov rdi, 0
+    mov rsi, 1048576
+    mov rdx, 3 ; PROT_READ | PROT_WRITE
+    mov r10, 34 ; MAP_PRIVATE | MAP_ANONYMOUS
+    mov r8, -1
+    mov r9, 0
+    syscall
+
+    cmp rax, 0
+    jl error_mmap
+    mov [output_base], rax
     mov [output_ptr], rax
 
     ; Write Header to Output Buffer
@@ -729,7 +740,7 @@ start:
     mov [source_ptr], rax
 
     ; Reset Output Ptr (Rewind to after header)
-    lea rax, [output_buffer]
+    mov rax, [output_base]
     add rax, 8
     mov [output_ptr], rax
 
@@ -788,9 +799,9 @@ start:
     ; Write Buffer to File
     mov rax, sys_write
     mov rdi, [output_fd]
-    lea rsi, [output_buffer]
+    mov rsi, [output_base]
     mov rdx, [output_ptr]
-    sub rdx, rsi ; Length = output_ptr - output_buffer
+    sub rdx, rsi ; Length = output_ptr - output_base
     syscall
 
     ; Close Output
@@ -849,12 +860,12 @@ exit:
 ; --- ROUTINES ---
 
 check_buffer_overflow:
-    ; Check if output_ptr >= output_buffer + 1048576 - 8 (Safety margin for multibyte writes)
+    ; Check if output_ptr >= output_buffer + 1MB - 8
     push rax
     push rbx
     mov rax, [output_ptr]
-    lea rbx, [output_buffer]
-    add rbx, 1048568
+    mov rbx, [output_base]
+    add rbx, 1048568 ; 1MB - 8
     cmp rax, rbx
     jae .overflow
     pop rbx
@@ -1008,7 +1019,7 @@ try_parse_directive:
     push rbx
     mov rbx, [output_ptr]
     add rbx, rax
-    lea rax, [output_buffer]
+    mov rax, [output_base]
     add rax, 1048576
     cmp rbx, rax
     jae .rb_overflow
@@ -1079,7 +1090,7 @@ try_parse_directive:
     push rbx
     mov rbx, [output_ptr]
     add rbx, rcx
-    lea rax, [output_buffer]
+    mov rax, [output_base]
     add rax, 1048576
     cmp rbx, rax
     jae .db_str_overflow
@@ -2193,6 +2204,7 @@ source_ptr dq 0
 start_ptr dq 0
 source_end dq 0
 output_ptr dq 0
+output_base dq 0
 output_fd dq 0
 
 msg_d1 db "1", 10, 0
@@ -2219,6 +2231,7 @@ str_include db "include", 0
 str_db db "db", 0
 str_rb db "rb", 0
 
+align 16
 stat_buf:
     rb 144
 
@@ -2231,7 +2244,6 @@ str_lakukan db "lakukan", 0
 str_fungsi db "fungsi", 0
 str_kembali db "kembali", 0
 
-token_buffer: rb 256
 symbol_table: rb 16384 ; Symbol Table (Hash, Offset) * 1024 entries
 symbol_count: dq 0
 pass_count: dq 0
@@ -2244,7 +2256,6 @@ mod_type: dq 0 ; 0=Mod00, 1=Mod01(Disp8), 2=Mod10(Disp32)
 control_stack: rb 16384 ; 1024 entries * 16 bytes (Type, ID)
 stack_top: dq 0
 next_label_id: dq 0
+token_buffer: rb 256
 
 include '../brainlib/vzoel_table.fox'
-
-output_buffer: rb 1048576 ; 1MB
